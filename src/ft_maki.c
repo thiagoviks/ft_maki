@@ -24,6 +24,45 @@ ssize_t ft_write(int fd, const void *buf, size_t len)
     return ret;
 }
 
+ssize_t ft_read(int fd, void *buf, size_t count)
+{
+    ssize_t ret;
+    asm volatile (
+        "mov $0, %%rax\n"
+        "syscall"
+        : "=a"(ret)
+        : "D"(fd), "S"(buf), "d"(count)
+        : "rcx", "r11", "memory"
+    );
+    return ret;
+}
+
+int ft_open(const char *pathname, int flags, int mode)
+{
+    int ret;
+    asm volatile (
+        "mov $2, %%rax\n"
+        "syscall"
+        : "=a"(ret)
+        : "D"(pathname), "S"(flags), "d"(mode)
+        : "rcx", "r11", "memory"
+    );
+    return ret;
+}
+
+int ft_close(int fd)
+{
+    int ret;
+    asm volatile (
+        "mov $3, %%rax\n"
+        "syscall"
+        : "=a"(ret)
+        : "D"(fd)
+        : "rcx", "r11", "memory"
+    );
+    return ret;
+}
+
 void ft_exit(long code)
 {
     asm volatile (
@@ -49,19 +88,6 @@ void ft_putstr(const char *str)
     {
         ft_write(1, str++, 1);
     }
-}
-
-size_t ft_read(int fd, void *buf, size_t count)
-{
-    size_t ret;
-    asm volatile (
-        "mov $0, %%rax\n"
-        "syscall"
-        : "=a"(ret)
-        : "D"(fd), "S"(buf), "d"(count)
-        : "rcx", "r11", "memory"
-    );
-    return ret;
 }
 
 static t_block *find_free_block(size_t size)
