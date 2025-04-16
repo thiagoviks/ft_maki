@@ -7,16 +7,20 @@ static size_t align(size_t size)
     return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
 }
 
-size_t ft_write(int fd, const void *buf, size_t len)
+ssize_t ft_write(int fd, const void *buf, size_t len)
 {
-    size_t ret;
-    asm volatile (
-        "mov $1, %%rax\n"
-        "syscall"
-        : "=a"(ret)
-        : "D"(fd), "S"(buf), "d"(len)
-        : "rcx", "r11", "memory"
-    );
+    ssize_t ret;
+    __asm__ volatile (
+		"movq $1, %%rax\n\t"        // syscall number for write
+		"movq %1, %%rdi\n\t"        // file descriptor
+		"movq %2, %%rsi\n\t"        // buffer
+		"movq %3, %%rdx\n\t"        // count
+		"syscall\n\t"
+		"movq %%rax, %0\n\t"
+		: "=r" (ret)
+		: "r" ((long)fd), "r" (buf), "r" ((long)len)
+		: "%rax", "%rdi", "%rsi", "%rdx"
+	);
     return ret;
 }
 
