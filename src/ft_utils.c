@@ -352,8 +352,7 @@ char	**ft_split(char const *s, char c)
 	size_t	j;
 	size_t	word_num;
 
-	if (!s ||\
-			!(buff = (char **)ft_malloc(sizeof(char *) * (count_word(s, c) + 1))))
+	if (!s || !(buff = (char **)ft_malloc(sizeof(char *) * (count_word(s, c) + 1))))
 		return (NULL);
 	j = 0;
 	word_num = count_word(s, c);
