@@ -380,3 +380,49 @@ void	ft_map(int *arr, size_t size, int (*func)(int))
 		i++;
 	}
 }
+
+ssize_t ft_getline(char **lineptr, size_t *n, int fd)
+{
+	if (!lineptr || !n)
+		return -1;
+
+	if (*lineptr == NULL || *n == 0)
+	{
+		*n = 128;
+		*lineptr = (char *)ft_malloc(*n);
+		if (!*lineptr)
+			return -1;
+	}
+
+	size_t i = 0;
+	char c;
+	ssize_t bytes_read;
+
+	while (1)
+	{
+		bytes_read = ft_read(fd, &c, 1);
+		if (bytes_read <= 0)
+			break;
+
+		// Reallocate if buffer is not sufficient
+		if (i >= *n - 1)
+		{
+			size_t new_size = *n * 2;
+			char *new_ptr = (char *)ft_realloc(*lineptr, new_size);
+			if (!new_ptr)
+				return -1;
+			*lineptr = new_ptr;
+			*n = new_size;
+		}
+
+		(*lineptr)[i++] = c;
+		if (c == '\n')
+			break;
+	}
+
+	if (i == 0)
+		return -1;
+
+	(*lineptr)[i] = '\0';
+	return i;
+}
