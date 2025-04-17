@@ -90,6 +90,27 @@ void ft_putstr(const char *str)
     }
 }
 
+char    *ft_strdup(const char *src)
+{
+    char *str;
+    int i = 0;
+
+    while (src[i] != '\0')
+        i++;
+
+    str = ft_malloc(sizeof(char) * (ft_strlen((char *)src) + 1));
+    if (!str)
+        return (NULL);
+    i = 0;
+    while (src[i])
+    {
+        str[i] = src[i];
+        i++;
+    }
+    str[i] = '\0';
+    return (str);
+}
+
 static t_block *find_free_block(size_t size)
 {
     t_block *current = head;
