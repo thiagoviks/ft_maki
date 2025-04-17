@@ -275,7 +275,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	if (!s1 || !s2)
 		return (NULL);
-	if (!(buff = (char *ft_malloc(sizeof(char) *
+	if (!(buff = (char *)ft_malloc(sizeof(char) *
 					(ft_strlen(s1) + ft_strlen(s2) + 1))))
 		return (NULL);
 	i = 0;
@@ -432,22 +432,22 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 
 void	ft_putchar_fd(char c, int fd)
 {
-	write(fd, &c, 1);
+	ft_write(fd, &c, 1);
 }
 
 void	ft_putstr_fd(char *s, int fd)
 {
 	if (!s)
 		return ;
-	write(fd, s, ft_strlen(s));
+	ft_write(fd, s, ft_strlen(s));
 }
 
 void	ft_putendl_fd(char *s, int fd)
 {
 	if (!s)
 		return ;
-	write(fd, s, ft_strlen(s));
-	write(fd, "\n", 1);
+	ft_write(fd, s, ft_strlen(s));
+	ft_write(fd, "\n", 1);
 }
 
 void	ft_putnbr_fd(int n, int fd)
@@ -552,7 +552,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 		del((*lst)->content);
 		temp = *lst;
 		*lst = (*lst)->next;
-		free(temp);
+		ft_free(temp);
 	}
 	*lst = NULL;
 }
@@ -588,4 +588,36 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 		lst = lst->next;
 	}
 	return (newlist);
+}
+
+t_list  *ft_lstmapi(t_list *lst, void *(*f)(void *, int), void (*del)(void *))
+{
+	t_list	*newlist = NULL;
+	t_list	*newelem;
+	int		index = 0;
+
+	if (!lst || !f)
+		return (NULL);
+	while (lst)
+	{
+		newelem = ft_lstnew(f(lst->content, index));
+		if (!newelem)
+		{
+			ft_lstclear(&newlist, del);
+			return (NULL);
+		}
+		ft_lstadd_back(&newlist, newelem);
+		lst = lst->next;
+		index++;
+	}
+	return (newlist);
+}
+
+void    ft_print_list(t_list *lst)
+{
+	while (lst)
+	{
+		ft_printf("%s\n", (char *)lst->content);
+		lst = lst->next;
+	}
 }
