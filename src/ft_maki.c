@@ -1,6 +1,9 @@
 #include "../include/ft_maki.h"
 
-static t_block *head = NULL;
+//used to manage RAM by doubled linked list
+static t_block *head = NULL; 
+//is used on ft_strtok 
+static char *saveptr = NULL;
 
 static size_t align(size_t size)
 {
@@ -118,6 +121,41 @@ char    *ft_strdup(const char *src)
     }
     str[i] = '\0';
     return (str);
+}
+
+static int is_delim(char c, const char *delim) {
+	while (*delim) {
+		if (c == *delim)
+			return 1;
+		delim++;
+	}
+	return 0;
+}
+
+char *ft_strtok(char *str, const char *delim) {
+	if (str)
+		saveptr = str;
+	else if (!saveptr)
+		return NULL;
+
+	// Pula delimitadores iniciais
+	while (*saveptr && is_delim(*saveptr, delim))
+		saveptr++;
+
+	if (*saveptr == '\0')
+		return NULL;
+
+	char *token_start = saveptr;
+
+	while (*saveptr && !is_delim(*saveptr, delim))
+		saveptr++;
+
+	if (*saveptr) {
+		*saveptr = '\0';
+		saveptr++;
+	}
+
+	return token_start;
 }
 
 static t_block *find_free_block(size_t size)

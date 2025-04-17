@@ -62,6 +62,7 @@ char				*ft_strdup(const char *s);
 void				ft_reverse(char *str, int length);
 int					ft_itoa_str(int num, char *str);
 int					ft_strcmp(const char *s1, const char *s2);
+char				*ft_strtok(char *str, const char *delim);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
 
 //RAM manager
