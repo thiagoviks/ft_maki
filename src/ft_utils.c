@@ -371,6 +371,14 @@ char	**ft_split(char const *s, char c)
 	return (buff);
 }
 
+void ft_split_free(char **arr)
+{
+	if (!arr) return;
+	for (int i = 0; arr[i]; i++)
+		free(arr[i]);
+	free(arr);
+}
+
 static int	count_digits(int n)
 {
 	int count = 1;
