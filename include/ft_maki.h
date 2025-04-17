@@ -61,6 +61,7 @@ int					ft_atoi(const char *nptr);
 char				*ft_strdup(const char *s);
 void				ft_reverse(char *str, int length);
 int					ft_itoa_str(int num, char *str);
+int					ft_strcmp(char *s1, char *s2);
 
 //RAM manager
 void				*ft_malloc(size_t size);
