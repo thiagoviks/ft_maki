@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ft_maki
+Description: Personal library for debug and printf
+Version: 1.0
+Libs: -L${libdir} -lft_maki
+Cflags: -I${includedir}
