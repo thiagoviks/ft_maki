@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Destination paths
+LOCAL_INCLUDE_DIR="/usr/local/include"
+LOCAL_LIB_DIR="/usr/local/lib"
 INCLUDE_DIR="/usr/local/include"
-LIB_DIR="/usr/local/lib"
+LIB_DIR="/usr/lib"
 
 # Source files
 HEADER="include/ft_maki.h"
