@@ -64,6 +64,9 @@ int					ft_close(int fd);
 size_t				ft_strlen(const char *s);
 void				ft_putstr(const char *str);
 int					ft_atoi(const char *nptr);
+int					ft_atoi_base(const char *str, int base);
+int					ft_atoi_auto(const char *str);
+
 char				*ft_strdup(const char *s);
 void				ft_reverse(char *str, int length);
 int					ft_itoa_str(int num, char *str);
@@ -71,6 +74,8 @@ int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strtok(char *str, const char *delim);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
 void				ft_perror(const char *str);
+int					ft_sscanf(const char *str, const char *format, ...);
+
 
 //RAM manager
 void				*ft_malloc(size_t size);

@@ -5,22 +5,6 @@ static t_block *head = NULL;
 //is used on ft_strtok 
 static char *saveptr = NULL;
 
-//is used on ft_perror start
-static int errno; // or extern if defined elsewhere
-
-static const t_error g_errors[] = {
-    { 1, "Operation not permitted" },
-    { 2, "No such file or directory" },
-    { 3, "No such process" },
-    { 4, "Interrupted system call" },
-    { 5, "Input/output error" },
-    { 6, "No such device or address" },
-    { 12, "Out of memory" },
-    { 13, "Permission denied" },
-    // ... Add more as needed
-};
-//is used on ft_perror end
-
 static size_t align(size_t size)
 {
     return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
@@ -108,6 +92,82 @@ void    ft_putstr(const char *str)
         ft_write(1, str++, 1);
     }
 }
+
+int ft_atoi(const char *str) {
+    int result = 0;
+    int sign = 1;
+
+    // Skip whitespace
+    while (*str == ' ' || (*str >= 9 && *str <= 13))
+        str++;
+
+    // Handle sign
+    if (*str == '-' || *str == '+') {
+        if (*str == '-')
+            sign = -1;
+        str++;
+    }
+
+    // Parse digits
+    while (*str >= '0' && *str <= '9') {
+        result = result * 10 + (*str - '0');
+        str++;
+    }
+
+    return result * sign;
+}
+
+static int char_to_digit(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return -1;
+}
+
+int ft_atoi_base(const char *str, int base) {
+    if (base < 2 || base > 16)
+        return 0;
+
+    int result = 0;
+    int sign = 1;
+
+    // Skip whitespace
+    while (*str == ' ' || (*str >= 9 && *str <= 13))
+        str++;
+
+    // Handle sign
+    if (*str == '-' || *str == '+') {
+        if (*str == '-')
+            sign = -1;
+        str++;
+    }
+
+    // Convert digits
+    int digit;
+    while ((digit = char_to_digit(*str)) >= 0 && digit < base) {
+        result = result * base + digit;
+        str++;
+    }
+
+    return result * sign;
+}
+
+int ft_atoi_auto(const char *str) {
+    // Skip whitespace
+    while (*str == ' ' || (*str >= 9 && *str <= 13))
+        str++;
+
+    // Detect base prefix
+    if (*str == '0') {
+        if (*(str + 1) == 'x' || *(str + 1) == 'X')
+            return ft_atoi_base(str + 2, 16); // hex
+        else if (*(str + 1) >= '0' && *(str + 1) <= '7')
+            return ft_atoi_base(str + 1, 8);  // octal
+    }
+
+    return ft_atoi_base(str, 10); // default decimal
+}
+
 int ft_strcmp(const char *s1, const char *s2)
 {
     int i;
@@ -481,6 +541,22 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 	return i;
 }
 
+//is used on ft_perror start
+int errno; // or extern if defined elsewhere
+
+static const t_error g_errors[] = {
+    { 1, "Operation not permitted" },
+    { 2, "No such file or directory" },
+    { 3, "No such process" },
+    { 4, "Interrupted system call" },
+    { 5, "Input/output error" },
+    { 6, "No such device or address" },
+    { 12, "Out of memory" },
+    { 13, "Permission denied" },
+    // ... Add more as needed
+};
+//is used on ft_perror end
+
 static const char *get_error_message(int err) {
     for (size_t i = 0; i < sizeof(g_errors) / sizeof(t_error); ++i) {
         if (g_errors[i].code == err)
@@ -493,4 +569,36 @@ void ft_perror(const char *str) {
     if (str && *str)
         ft_printf("%s: ", str);
     ft_printf("%s\n", get_error_message(errno));
+}
+
+int ft_sscanf(const char *str, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    int assigned = 0;
+    while (*format && *str) {
+        if (*format == '%') {
+            format++;
+            if (*format == 'd') {
+                int *iptr = va_arg(args, int *);
+                *iptr = ft_atoi(str);
+                while (*str == ' ' || (*str >= '0' && *str <= '9') || *str == '-')
+                    str++;
+                assigned++;
+            } else if (*format == 's') {
+                char *sptr = va_arg(args, char *);
+                while (*str == ' ') str++; // Skip leading spaces
+                while (*str && *str != ' ') {
+                    *sptr++ = *str++;
+                }
+                *sptr = '\0';
+                assigned++;
+            }
+        } else if (*format == *str) {
+            str++;
+        }
+        format++;
+    }
+    va_end(args);
+    return assigned;
 }
