@@ -5,6 +5,22 @@ static t_block *head = NULL;
 //is used on ft_strtok 
 static char *saveptr = NULL;
 
+//is used on ft_perror start
+static int errno; // or extern if defined elsewhere
+
+static const t_error g_errors[] = {
+    { 1, "Operation not permitted" },
+    { 2, "No such file or directory" },
+    { 3, "No such process" },
+    { 4, "Interrupted system call" },
+    { 5, "Input/output error" },
+    { 6, "No such device or address" },
+    { 12, "Out of memory" },
+    { 13, "Permission denied" },
+    // ... Add more as needed
+};
+//is used on ft_perror end
+
 static size_t align(size_t size)
 {
     return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
@@ -463,4 +479,18 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 
 	(*lineptr)[i] = '\0';
 	return i;
+}
+
+static const char *get_error_message(int err) {
+    for (size_t i = 0; i < sizeof(g_errors) / sizeof(t_error); ++i) {
+        if (g_errors[i].code == err)
+            return g_errors[i].message;
+    }
+    return "Unknown error";
+}
+
+void ft_perror(const char *str) {
+    if (str && *str)
+        ft_printf("%s: ", str);
+    ft_printf("%s\n", get_error_message(errno));
 }

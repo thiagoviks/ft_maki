@@ -47,6 +47,12 @@ typedef struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+//struct to ft_perror
+typedef struct s_error {
+    int code;
+    const char *message;
+} t_error;
+
 //ft_maki.c start
 //make syscall
 ssize_t				ft_write(int fd, const void *buf, size_t len);
@@ -64,6 +70,7 @@ int					ft_itoa_str(int num, char *str);
 int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strtok(char *str, const char *delim);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
+void				ft_perror(const char *str);
 
 //RAM manager
 void				*ft_malloc(size_t size);
