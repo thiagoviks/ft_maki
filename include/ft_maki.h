@@ -76,6 +76,8 @@ char				*ft_strtok(char *str, const char *delim);
 char				*ft_strpbrk(const char *s, const char *accept);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
 void				ft_perror(const char *str);
+const char			*ft_strerror(int err);
+void				ft_list_all_errors(void);
 int					ft_sscanf(const char *str, const char *format, ...);
 char				*ft_utoa_base(unsigned int value, char *buf, int base);
 char				*ft_itoa_base(int value, char *buf, int base);

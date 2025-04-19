@@ -566,30 +566,56 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 int errno; // or extern if defined elsewhere
 
 static const t_error g_errors[] = {
-    { 1, "Operation not permitted" },
-    { 2, "No such file or directory" },
-    { 3, "No such process" },
-    { 4, "Interrupted system call" },
-    { 5, "Input/output error" },
-    { 6, "No such device or address" },
-    { 12, "Out of memory" },
-    { 13, "Permission denied" },
-    // ... Add more as needed
+    { 0,  "Success" },
+    { 1,  "Operation not permitted" },
+	{ 2,  "No such file or directory" },
+	{ 3,  "No such process" },
+	{ 4,  "Interrupted system call" },
+	{ 5,  "Input/output error" },
+	{ 6,  "No such device or address" },
+    { 7,  "Argument list too long" },
+    { 8,  "Exec format error" },
+    { 9,  "Bad file descriptor" },
+    { 10, "No child processes" },
+	{ 12, "Out of memory" },
+	{ 13, "Permission denied" }
 };
 //is used on ft_perror end
-
+//binary search
 static const char *get_error_message(int err) {
-    for (size_t i = 0; i < sizeof(g_errors) / sizeof(t_error); ++i) {
-        if (g_errors[i].code == err)
-            return g_errors[i].message;
-    }
-    return "Unknown error";
+	size_t left = 0;
+	size_t right = sizeof(g_errors) / sizeof(t_error) - 1;
+
+	while (left <= right)
+	{
+		size_t mid = left + (right - left) / 2;
+
+		if (g_errors[mid].code == err)
+			return g_errors[mid].message;
+		else if (g_errors[mid].code < err)
+			left = mid + 1;
+		else
+			right = mid - 1;
+	}
+	return "Unknown error";
 }
 
 void ft_perror(const char *str) {
     if (str && *str)
         ft_printf("%s: ", str);
     ft_printf("%s\n", get_error_message(errno));
+}
+
+const char *ft_strerror(int err)
+{
+    return get_error_message(err);
+}
+
+void ft_list_all_errors(void)
+{
+    size_t len = sizeof(g_errors) / sizeof(t_error);
+    for (size_t code = 0; code <= len; code++)
+        ft_printf("Error %d: %s\n", code, get_error_message(code));
 }
 
 int ft_sscanf(const char *str, const char *format, ...) {
