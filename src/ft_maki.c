@@ -77,6 +77,14 @@ void ft_exit(long code)
     __builtin_unreachable();
 }
 
+char *ft_strcpy(char *dst, const char *src) {
+    char *ret = dst;
+    while (*src)
+        *dst++ = *src++;
+    *dst = '\0';
+    return ret;
+}
+
 size_t ft_strlen(const char *s)
 {
     size_t len = 0;
@@ -232,6 +240,19 @@ char *ft_strtok(char *str, const char *delim) {
 	}
 
 	return token_start;
+}
+
+char *ft_strpbrk(const char *s, const char *accept) {
+    while (*s) {
+        const char *a = accept;
+        while (*a) {
+            if (*s == *a)
+                return (char *)s;
+            a++;
+        }
+        s++;
+    }
+    return NULL;
 }
 
 static t_block *find_free_block(size_t size)
@@ -601,4 +622,86 @@ int ft_sscanf(const char *str, const char *format, ...) {
     }
     va_end(args);
     return assigned;
+}
+
+char	*ft_utoa_base(unsigned int value, char *buf, int base) {
+    static const char digits[] = "0123456789abcdef";
+    char tmp[32];
+    int i = 0;
+
+    if (base < 2 || base > 16) {
+        buf[0] = '\0';
+        return buf;
+    }
+
+    // Special case for 0
+    if (value == 0) {
+        buf[0] = '0';
+        buf[1] = '\0';
+        return buf;
+    }
+
+    while (value > 0) {
+        tmp[i++] = digits[value % base];
+        value /= base;
+    }
+
+    // Reverse the result into the output buffer
+    for (int j = 0; j < i; ++j)
+        buf[j] = tmp[i - j - 1];
+    buf[i] = '\0';
+
+    return buf;
+}
+
+char	*ft_itoa_base(int value, char *buf, int base) {
+    if (value < 0 && base == 10) {
+        *buf++ = '-';
+        ft_utoa_base((unsigned int)(-value), buf, base);
+        return buf - 1;
+    } else {
+        return ft_utoa_base((unsigned int)value, buf, base);
+    }
+}
+
+int ft_sprintf(char *buf, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    char *p = buf;
+
+    while (*fmt) {
+        if (*fmt == '%' && *(fmt + 1)) {
+            fmt++;
+            if (*fmt == 's') {
+                const char *s = va_arg(args, const char *);
+                while (*s) *p++ = *s++;
+            } else if (*fmt == 'd') {
+                int val = va_arg(args, int);
+                char tmp[20];
+                ft_itoa_base(val, tmp, 10);  // implement this if not done
+                const char *s = tmp;
+                while (*s) *p++ = *s++;
+            } else if (*fmt == 'x') {
+                unsigned int val = va_arg(args, unsigned int);
+                char tmp[20];
+                ft_utoa_base(val, tmp, 16);  // implement this too
+                const char *s = tmp;
+                while (*s) *p++ = *s++;
+            } else if (*fmt == 'c') {
+                char c = (char)va_arg(args, int);
+                *p++ = c;
+            } else {
+                *p++ = '%';
+                *p++ = *fmt;
+            }
+        } else {
+            *p++ = *fmt;
+        }
+        fmt++;
+    }
+
+    *p = '\0';
+    va_end(args);
+    return (int)(p - buf);
 }

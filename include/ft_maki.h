@@ -61,6 +61,7 @@ ssize_t				ft_read(int fd, void *buf, size_t count);
 int					ft_open(const char *pathname, int flags, int mode);
 int					ft_close(int fd);
 
+char				*ft_strcpy(char *dst, const char *src);
 size_t				ft_strlen(const char *s);
 void				ft_putstr(const char *str);
 int					ft_atoi(const char *nptr);
@@ -72,9 +73,13 @@ void				ft_reverse(char *str, int length);
 int					ft_itoa_str(int num, char *str);
 int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strtok(char *str, const char *delim);
+char				*ft_strpbrk(const char *s, const char *accept);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
 void				ft_perror(const char *str);
 int					ft_sscanf(const char *str, const char *format, ...);
+char				*ft_utoa_base(unsigned int value, char *buf, int base);
+char				*ft_itoa_base(int value, char *buf, int base);
+int					ft_sprintf(char *buf, const char *fmt, ...);
 
 
 //RAM manager
