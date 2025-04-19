@@ -50,7 +50,7 @@ typedef struct		s_list
 //struct to ft_perror
 typedef struct s_error {
     int code;
-    const char *message;
+    const char *(*get_message)(void); //support to i18n
 } t_error;
 
 //ft_maki.c start
@@ -75,6 +75,8 @@ int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strtok(char *str, const char *delim);
 char				*ft_strpbrk(const char *s, const char *accept);
 ssize_t             ft_getline(char **lineptr, size_t *n, int fd);
+//const char			*ft_get_error_message(int err);
+void				ft_set_language(const char *lang); // "en", "pt", etc.
 void				ft_perror(const char *str);
 const char			*ft_strerror(int err);
 void				ft_list_all_errors(void);

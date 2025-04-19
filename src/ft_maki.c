@@ -564,58 +564,145 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 
 //is used on ft_perror start
 int errno; // or extern if defined elsewhere
+static const char *current_lang = "en";
+
+void	ft_set_language(const char *lang) {
+	current_lang = lang;
+}
+
+//Function for each language
+static const char	*msg_success(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Sucesso";
+	return "Success";
+}
+
+static const char	*msg_operation_not_permitted(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Operação nao permitida";
+	return "Operation not permitted";
+}
+
+static const char	*msg_no_such_file_or_directory(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Arquivo ou diretorio inexistente";
+	return "No such file or directory";
+}
+
+static const char	*msg_no_such_process(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Nao existe esse processo";
+	return "No such process";
+}
+
+static const char	*msg_interrupted_system_call(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Chamada de sistema interrompida";
+	return "Interrupted system call";
+}
+
+static const char	*msg_input_output_error(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Erro de entrada e saida";
+	return "Input/output error";
+}
+
+static const char	*msg_no_such_device_or_address(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Nao existe tal dispositivo ou endereco";
+	return "No such device or address";
+}
+
+static const char	*msg_argument_list_too_long(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Lista de argumentos muito longa";
+	return "Argument list too long";
+}
+
+static const char	*msg_exec_format_error(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Erro de Formato do exec";
+	return "Exec format error";
+}
+
+static const char	*msg_bad_file_descriptor(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Erro de descricao do arquivo";
+	return "Bad file descriptor";
+}
+
+static const char	*msg_no_child_processes(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Nenhum processo filho";
+	return "No child processes";
+}
+
+static const char	*msg_out_of_memory(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Sem memoria";
+	return "Out of memory";
+}
+
+static const char	*msg_permission_denied(void) {
+	if (ft_strcmp(current_lang, "pt") == 0)
+		return "Permissao negada";
+	return "Permission denied";
+}
 
 static const t_error g_errors[] = {
-    { 0,  "Success" },
-    { 1,  "Operation not permitted" },
-	{ 2,  "No such file or directory" },
-	{ 3,  "No such process" },
-	{ 4,  "Interrupted system call" },
-	{ 5,  "Input/output error" },
-	{ 6,  "No such device or address" },
-    { 7,  "Argument list too long" },
-    { 8,  "Exec format error" },
-    { 9,  "Bad file descriptor" },
-    { 10, "No child processes" },
-	{ 12, "Out of memory" },
-	{ 13, "Permission denied" }
+    { 0,  msg_success },
+    { 1,  msg_operation_not_permitted },
+	{ 2,  msg_no_such_file_or_directory },
+	{ 3,  msg_no_such_process },
+	{ 4,  msg_interrupted_system_call },
+	{ 5,  msg_input_output_error },
+	{ 6,  msg_no_such_device_or_address },
+    { 7,  msg_argument_list_too_long },
+    { 8,  msg_exec_format_error },
+    { 9,  msg_bad_file_descriptor },
+    { 10, msg_no_child_processes },
+	{ 12, msg_out_of_memory },
+	{ 13, msg_permission_denied }
 };
+
 //is used on ft_perror end
 //binary search
-static const char *get_error_message(int err) {
+
+static const char	*ft_get_error_message(int err) {
 	size_t left = 0;
 	size_t right = sizeof(g_errors) / sizeof(t_error) - 1;
 
-	while (left <= right)
-	{
+	while (left <= right) {
 		size_t mid = left + (right - left) / 2;
 
 		if (g_errors[mid].code == err)
-			return g_errors[mid].message;
+			return g_errors[mid].get_message();
 		else if (g_errors[mid].code < err)
 			left = mid + 1;
 		else
 			right = mid - 1;
 	}
-	return "Unknown error";
+	return (ft_strcmp(current_lang, "pt") == 0)
+		? "Erro desconhecido"
+		: "Unknown error";
 }
 
 void ft_perror(const char *str) {
     if (str && *str)
         ft_printf("%s: ", str);
-    ft_printf("%s\n", get_error_message(errno));
+    ft_printf("%s\n", ft_get_error_message(errno));
 }
 
 const char *ft_strerror(int err)
 {
-    return get_error_message(err);
+    return ft_get_error_message(err);
 }
 
 void ft_list_all_errors(void)
 {
     size_t len = sizeof(g_errors) / sizeof(t_error);
     for (size_t code = 0; code <= len; code++)
-        ft_printf("Error %d: %s\n", code, get_error_message(code));
+        ft_printf("Error %d: %s\n", code, ft_get_error_message(code));
 }
 
 int ft_sscanf(const char *str, const char *format, ...) {
