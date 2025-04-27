@@ -31,6 +31,13 @@ typedef struct		s_block {
     struct s_block *prev;
 }					t_block;
 
+//To implement my own bool control
+typedef	enum		e_bool
+{
+	false,
+	true
+}					t_bool;
+
 // Flags struct  for ft_printf
 typedef struct		s_flags {
     int width;
@@ -61,8 +68,10 @@ ssize_t				ft_read(int fd, void *buf, size_t count);
 int					ft_open(const char *pathname, int flags, int mode);
 int					ft_close(int fd);
 
+char				*ft_strcat(char *s1, const char *s2);
 char				*ft_strcpy(char *dst, const char *src);
 size_t				ft_strlen(const char *s);
+void				ft_putchar(char c);
 void				ft_putstr(const char *str);
 int					ft_atoi(const char *nptr);
 int					ft_atoi_base(const char *str, int base);
