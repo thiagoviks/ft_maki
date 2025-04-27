@@ -34,8 +34,8 @@ typedef struct		s_block {
 //To implement my own bool control
 typedef	enum		e_bool
 {
-	false,
-	true
+	FALSE = 0,
+	TRUE = 1
 }					t_bool;
 
 // Flags struct  for ft_printf
