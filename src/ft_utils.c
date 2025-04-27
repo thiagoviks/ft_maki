@@ -245,6 +245,12 @@ int		ft_tolower(int c)
 	return (c);
 }
 
+int		ft_isspace(int c)
+{
+    return (c == ' ' || (c >= '\t' && c <= '\r'));
+}
+
+
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	i;
