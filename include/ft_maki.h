@@ -152,6 +152,7 @@ int					ft_isprint(int c);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
 int					ft_isspace(int c);
+int					ft_isxdigit(int	c);
 int					ft_isnanf(float x);
 int					ft_isnan(double x);
 

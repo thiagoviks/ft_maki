@@ -250,6 +250,20 @@ int		ft_isspace(int c)
     return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
+int		ft_isxdigit(int	c)
+{
+    // Check if c is a decimal digit
+    if (c >= '0' && c <= '9')
+        return 1;
+    // Check if c is a lowercase hexadecimal digit
+    if (c >= 'a' && c <= 'f')
+        return 1;
+    // Check if c is an uppercase hexadecimal digit
+    if (c >= 'A' && c <= 'F')
+        return 1;
+    return 0; // Otherwise, not a hex digit
+}
+
 /* -----------------------------
    isnan implementations
    ----------------------------- */
