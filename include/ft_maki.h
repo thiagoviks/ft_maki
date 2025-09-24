@@ -152,6 +152,8 @@ int					ft_isprint(int c);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
 int					ft_isspace(int c);
+int					ft_isnanf(float x);
+int					ft_isnan(double x);
 
 char				*ft_substr(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
@@ -193,5 +195,8 @@ void				ft_lst_print_float_wrapper(void *data);
 void				ft_lst_print_double_wrapper(void *data);
 //ft_lst_wrappers.c end
 
+//need to be implemented
+//ft_isnan()
+//ft_atof()
 #endif
 

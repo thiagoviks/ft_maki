@@ -250,6 +250,44 @@ int		ft_isspace(int c)
     return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
+/* -----------------------------
+   isnan implementations
+   ----------------------------- */
+
+static inline uint64_t double_to_u64(double x) {
+    uint64_t bits;
+    ft_memcpy(&bits, &x, sizeof(bits));
+    return bits;
+}
+
+static inline uint32_t float_to_u32(float x) {
+    uint32_t bits;
+    ft_memcpy(&bits, &x, sizeof(bits));
+    return bits;
+}
+
+static inline int isnan_double_custom(double x) {
+    uint64_t bits = double_to_u64(x);
+    const uint64_t EXP_MASK = 0x7FF0000000000000ULL;
+    const uint64_t FRAC_MASK = 0x000FFFFFFFFFFFFFULL;
+    return ((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0ULL);
+}
+
+static inline int isnan_float_custom(float x) {
+    uint32_t bits = float_to_u32(x);
+    const uint32_t EXP_MASK = 0x7F800000U;
+    const uint32_t FRAC_MASK = 0x007FFFFFU;
+    return ((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0U);
+}
+
+int ft_isnanf(float x) {
+    return isnan_float_custom(x);
+}
+
+int ft_isnan(double x) {
+    return isnan_double_custom(x);
+}
+
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
