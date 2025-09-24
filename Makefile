@@ -1,41 +1,51 @@
-#to compile use your program
-#clang main.c $(pkg-config --cflags --libs ft_maki) -o main
+#echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+#source ~/.bashrc
 
-NAME = libft_maki.a
+
+NAME = ft_maki
+SRC_DIR = src
+OBJ_DIR = build
+INCLUDE_DIR = include
+
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
+
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -nostdlib -static -fno-stack-protector -nodefaultlibs -fPIC
-SRC = src/ft_maki.c src/ft_printf.c src/ft_utils.c src/ft_lst_wrapper.c
-OBJ = $(SRC:.c=.o)
-INCLUDES = -Iinclude
+CFLAGS = -Wall -Wextra -Werror -fPIC -I$(INCLUDE_DIR)
 
-.PHONY: all clean fclean re install install-pkgconfig uninstall
+.PHONY: all clean fclean re test install
 
-all: $(NAME)
+all: $(OBJ_DIR) lib$(NAME).a lib$(NAME).so
 
-$(NAME): $(OBJ)
-	ar rcs $(NAME) $(OBJ)
+$(OBJ_DIR):
+	mkdir -p $@
 
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+lib$(NAME).a: $(OBJ)
+	ar rcs $@ $^
+
+lib$(NAME).so: $(OBJ)
+	$(CC) -shared -Wl,-z,defs -o $@ $^
 
 clean:
-	rm -f $(OBJ)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f lib$(NAME).a lib$(NAME).so main
 
 re: fclean all
 
-install: $(NAME)
-	install -Dm644 $(NAME) $(PREFIX)/lib/$(NAME)
-	install -Dm644 include/ft_maki.h $(PREFIX)/include/ft_maki.h
+test: all
+	$(CC) main.c -I$(INCLUDE_DIR) -L. -l$(NAME) -o main -no-pie
 
-install-pkgconfig: install
-	@echo "Instalando ft_maki.pc em $(PREFIX)/lib/pkgconfig"
-	sed "s|@PREFIX@|$(PREFIX)|g" ft_maki.pc.in > ft_maki.pc
-	install -Dm644 ft_maki.pc $(PREFIX)/lib/pkgconfig/ft_maki.pc
-
-uninstall:
-	rm -f $(PREFIX)/lib/$(NAME)
-	rm -f $(PREFIX)/include/ft_maki.h
-	rm -f $(PREFIX)/lib/pkgconfig/ft_maki.pc
+install: all
+	sudo cp lib$(NAME).a /usr/local/lib/
+	sudo cp lib$(NAME).so /usr/local/lib/
+	sudo cp $(INCLUDE_DIR)/ft_maki.h /usr/local/include/
+	sudo ldconfig
+	echo "✅ ft_maki installed successfully!"
+	echo "You can now use:"
+	echo "#include <ft_maki.h>"
+	echo "and compile with: gcc main.c -lft_maki"
