@@ -76,6 +76,7 @@ void				ft_putstr(const char *str);
 int					ft_atoi(const char *nptr);
 int					ft_atoi_base(const char *str, int base);
 int					ft_atoi_auto(const char *str);
+double				ft_atof(const char *s);
 
 char				*ft_strdup(const char *s);
 void				ft_reverse(char *str, int length);
@@ -93,7 +94,6 @@ int					ft_sscanf(const char *str, const char *format, ...);
 char				*ft_utoa_base(unsigned int value, char *buf, int base);
 char				*ft_itoa_base(int value, char *buf, int base);
 int					ft_sprintf(char *buf, const char *fmt, ...);
-
 
 //RAM manager
 void				*ft_malloc(size_t size);

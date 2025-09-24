@@ -199,6 +199,179 @@ int ft_atoi_auto(const char *str) {
     return ft_atoi_base(str, 10); // default decimal
 }
 
+/* -----------------------------
+   atof implementation (string -> double)
+   Supports:
+   - whitespace, optional sign
+   - decimal floats with exponent (e/E)
+   - hexadecimal floats with binary exponent (p/P)
+   - inf, infinity, nan
+   ----------------------------- */
+
+static double pow10_int(int exp) {
+    double result = 1.0, base = 10.0;
+    int e = exp;
+    if (e < 0) {
+        e = -e;
+        while (e) {
+            if (e & 1) result /= base;
+            base *= base;
+            e >>= 1;
+        }
+    } else {
+        while (e) {
+            if (e & 1) result *= base;
+            base *= base;
+            e >>= 1;
+        }
+    }
+    return result;
+}
+
+static double pow2_int(int exp) {
+    double result = 1.0, base = 2.0;
+    int e = exp;
+    if (e < 0) {
+        e = -e;
+        while (e) {
+            if (e & 1) result /= base;
+            base *= base;
+            e >>= 1;
+        }
+    } else {
+        while (e) {
+            if (e & 1) result *= base;
+            base *= base;
+            e >>= 1;
+        }
+    }
+    return result;
+}
+
+static int starts_with_ci(const char *s, const char *prefix) {
+    while (*prefix) {
+        if (ft_tolower((unsigned char)*s) != ft_tolower((unsigned char)*prefix)) return 0;
+        s++; prefix++;
+    }
+    return 1;
+}
+
+/* parse hexadecimal float */
+static double parse_hex_float(const char *p, int sign) {
+    double value = 0.0;
+    int any_digits = 0;
+
+    // parse 0x prefix already consumed
+    while (ft_isxdigit((unsigned char)*p)) {
+        int digit;
+        if (*p >= '0' && *p <= '9') digit = *p - '0';
+        else if (*p >= 'a' && *p <= 'f') digit = 10 + (*p - 'a');
+        else digit = 10 + (*p - 'A');
+        value = value * 16.0 + digit;
+        p++;
+        any_digits = 1;
+    }
+
+    double frac = 0.0;
+    double base = 1.0 / 16.0;
+    if (*p == '.') {
+        p++;
+        while (ft_isxdigit((unsigned char)*p)) {
+            int digit;
+            if (*p >= '0' && *p <= '9') digit = *p - '0';
+            else if (*p >= 'a' && *p <= 'f') digit = 10 + (*p - 'a');
+            else digit = 10 + (*p - 'A');
+            frac += digit * base;
+            base /= 16.0;
+            p++;
+            any_digits = 1;
+        }
+    }
+
+    value += frac;
+    if (!any_digits) return 0.0;
+
+    int exp_sign = 1, exp_val = 0;
+    if (*p == 'p' || *p == 'P') {
+        p++;
+        if (*p == '+') { p++; }
+        else if (*p == '-') { exp_sign = -1; p++; }
+        while (ft_isdigit((unsigned char)*p)) {
+            int d = *p - '0';
+            if (exp_val < 1000000) exp_val = exp_val * 10 + d;
+            p++;
+        }
+    }
+
+    int final_exp = exp_sign * exp_val;
+    if (final_exp != 0) value = value * pow2_int(final_exp);
+    return sign * value;
+}
+
+double  ft_atof(const char *s)
+{
+    const char *p = s;
+    while (ft_isspace((unsigned char)*p)) p++;
+
+    int sign = 1;
+    if (*p == '+') p++;
+    else if (*p == '-') { sign = -1; p++; }
+
+    if (starts_with_ci(p, "nan")) {
+        uint64_t nan_bits = 0x7FF8000000000001ULL;
+        double nanval;
+        ft_memcpy(&nanval, &nan_bits, sizeof(nanval));
+        return nanval * sign;
+    }
+    if (starts_with_ci(p, "inf")) {
+        uint64_t inf_bits = 0x7FF0000000000000ULL;
+        double infval;
+        ft_memcpy(&infval, &inf_bits, sizeof(infval));
+        return infval * sign;
+    }
+
+    // detect hex float
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        return parse_hex_float(p + 2, sign);
+    }
+
+    double value = 0.0;
+    int any_digits = 0;
+    while (ft_isdigit((unsigned char)*p)) {
+        any_digits = 1;
+        value = value * 10.0 + (*p - '0');
+        p++;
+    }
+    if (*p == '.') {
+        p++;
+        double place = 1.0;
+        while (ft_isdigit((unsigned char)*p)) {
+            any_digits = 1;
+            place *= 10.0;
+            value = value * 10.0 + (*p - '0');
+            p++;
+        }
+        if (place != 1.0) value /= place;
+    }
+    if (!any_digits) return 0.0 * sign;
+
+    int exp_sign = 1, exp_val = 0;
+    if (*p == 'e' || *p == 'E') {
+        p++;
+        if (*p == '+') p++;
+        else if (*p == '-') { exp_sign = -1; p++; }
+        if (!ft_isdigit((unsigned char)*p)) return sign * value;
+        while (ft_isdigit((unsigned char)*p)) {
+            if (exp_val < 1000000) exp_val = exp_val * 10 + (*p - '0');
+            p++;
+        }
+    }
+    int final_exp = exp_sign * exp_val;
+    if (final_exp != 0) value *= pow10_int(final_exp);
+
+    return sign * value;
+}
+
 int ft_strcmp(const char *s1, const char *s2)
 {
     int i;
@@ -586,7 +759,7 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 }
 
 //is used on ft_perror start
-int errno; // or extern if defined elsewhere
+int saved_errno; // or extern if defined elsewhere
 static const char *current_lang = "en";
 
 void	ft_set_language(const char *lang) {
@@ -713,7 +886,7 @@ static const char	*ft_get_error_message(int err) {
 void ft_perror(const char *str) {
     if (str && *str)
         ft_printf("%s: ", str);
-    ft_printf("%s\n", ft_get_error_message(errno));
+    ft_printf("%s\n", ft_get_error_message(saved_errno));
 }
 
 const char *ft_strerror(int err)
