@@ -21,6 +21,7 @@
 #define BLOCK_SIZE sizeof(t_block)
 #define MMAP_THRESHOLD (128 * 1024) // 128 KB
 #define ALIGNMENT 16
+#define ft_offsetof(type, member) ((size_t) &(((type *)0)->member))
 
 //Is used for RAM magenement
 typedef struct		s_block {
