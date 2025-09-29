@@ -538,17 +538,17 @@ t_list		*ft_lstnew(void *content)
 	return (head);
 }
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_list **lst, t_list *lstnew)
 {
 	if (!*lst)
 	{
-		*lst = new;
+		*lst = lstnew;
 		return ;
 	}
-	if (new)
+	if (lstnew)
 	{
-		new->next = *lst;
-		*lst = new;
+		lstnew->next = *lst;
+		*lst = lstnew;
 	}
 }
 
@@ -582,19 +582,19 @@ t_list	*ft_lstlast(t_list *lst)
 	return (curr);
 }
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_list **lst, t_list *lstnew)
 {
 	t_list *last;
 
 	if (*lst == NULL)
 	{
-		*lst = new;
+		*lst = lstnew;
 		return ;
 	}
-	if (new)
+	if (lstnew)
 	{
 		last = ft_lstlast(*lst);
-		last->next = new;
+		last->next = lstnew;
 	}
 }
 
