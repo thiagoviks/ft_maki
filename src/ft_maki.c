@@ -489,7 +489,9 @@ static t_block *request_space(size_t size)
         );
 
         if (addr == (void *)-1)
-        return NULL;
+        {
+            return NULL;
+        }
 
         block = (t_block *)addr;
         block->size = size;
