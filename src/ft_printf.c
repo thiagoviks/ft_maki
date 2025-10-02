@@ -6,7 +6,7 @@ int ft_printf_numlen(long long n) {
         len++;
         n /= 10;
     }
-    return len;
+    return (len);
 }
 
 int ft_printf_unumlen(unsigned long n) {
@@ -15,22 +15,22 @@ int ft_printf_unumlen(unsigned long n) {
         len++;
         n /= 10;
     }
-    return len;
+    return (len);
 }
 
 int ft_printf_max(int a, int b) {
-    return (a > b) ? a : b;
+    return ((a > b) ? a : b);
 }
 
 int ft_printf_putchar(char c) {
-    return ft_write(1, &c, 1);
+    return (ft_write(1, &c, 1));
 }
 
 int ft_printf_putnchar(char c, int n) {
     int count = 0;
     while (n-- > 0)
         count += ft_printf_putchar(c);
-    return count;
+    return (count);
 }
 
 
@@ -47,7 +47,7 @@ int ft_printf_putchar_base(char c, int width, int left) {
         for (int i = 0; i < width - 1; i++)
             printed += ft_write(1, " ", 1);
 
-    return printed;
+    return (printed);
 }
 
 int ft_printf_putstr(char *s, t_flags flags) {
@@ -62,7 +62,7 @@ int ft_printf_putstr(char *s, t_flags flags) {
     len += ft_write(1, s, str_len);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - str_len);
-    return len;
+    return (len);
 }
 
 int ft_printf_putnbr(long long n, t_flags flags) {
@@ -91,7 +91,7 @@ int ft_printf_putnbr(long long n, t_flags flags) {
     len += ft_write(1, &buffer[i + 1], 20 - i);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - total_width);
-    return len;
+    return (len);
 }
 
 
@@ -117,7 +117,7 @@ int ft_printf_putunbr(unsigned int n, t_flags flags) {
     len += ft_write(1, &buffer[i + 1], 10 - i);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - ft_printf_max(flags.precision, num_len));
-    return len;
+    return (len);
 }
 
 int ft_printf_puthex(unsigned long n, t_flags flags, int uppercase) {
@@ -140,7 +140,7 @@ int ft_printf_puthex(unsigned long n, t_flags flags, int uppercase) {
     len += ft_write(1, &buffer[i + 1], hex_len);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - hex_len);
-    return len;
+    return (len);
 }
 
 int ft_printf_putptr(void *ptr, t_flags flags) {
@@ -163,13 +163,13 @@ int ft_printf_putptr(void *ptr, t_flags flags) {
     len += ft_write(1, &buffer[i + 1], str_len);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - str_len);
-    return len;
+    return (len);
 }
 
 long long ft_printf_power10(int n) {
     long long res = 1;
     while (n--) res *= 10;
-    return res;
+    return (res);
 }
 
 /*
@@ -330,19 +330,28 @@ static long long ft_printf_round_fraction(double x) {
     long long base = (long long)x;
     double diff = x - (double)base;
     if (diff >= 0.5)
-        return base + 1;
-    return base;
+        return (base + 1);
+    return (base);
 }
 
 //this is a better implementation
-int ft_printf_putfloat(double n, t_flags flags) {
+int ft_printf_putfloat(double n, t_flags flags)
+{
     int count = 0;
     char buf[128];
     int len = 0;
 
     // Treats NaN/Inf
-    if (ft_isnan(n)) return ft_write(1, "nan", 3);
-    if (ft_isinf(n)) return (n > 0) ? ft_write(1, "inf", 3) : ft_write(1, "-inf", 4);
+    if (ft_isnan(n))
+    {
+        return (ft_write(1, "nan", 3));
+
+    } 
+    if (ft_isinf(n))
+    {
+        return ((n > 0) ? 
+        ft_write(1, "inf", 3) : ft_write(1, "-inf", 4));
+    }    
 
     // Signal
     int neg = 0;
@@ -434,7 +443,7 @@ int ft_printf_putfloat(double n, t_flags flags) {
     if (flags.left_align)
         count += ft_printf_putnchar(' ', pad);
 
-    return count;
+    return (count);
 }
 
 int ft_printf_putpercent(t_flags flags) {
@@ -446,7 +455,7 @@ int ft_printf_putpercent(t_flags flags) {
     len += ft_write(1, "%", 1);
     if (flags.left_align)
         len += ft_printf_pad(' ', flags.width - 1);
-    return len;
+    return (len);
 }
 
 //write using buffer
@@ -460,7 +469,7 @@ int ft_printf_pad(char c, int count) {
         len += ft_write(1, buf, chunk);
         count -= chunk;
     }
-    return len;
+    return (len);
 }
 
 
@@ -470,7 +479,7 @@ static int ft_printf_parse_number(const char **format) {
         num = num * 10 + (**format - '0');
         (*format)++;
     }
-    return num;
+    return (num);
 }
 
 t_flags ft_printf_parse_flags(const char **format) {
@@ -496,7 +505,7 @@ t_flags ft_printf_parse_flags(const char **format) {
     if (flags.left_align)
         flags.zero_padding = false;
 
-    return flags;
+    return (flags);
 }
 
 int ft_printf_dispatch(char spec, va_list args, t_flags flags) {
@@ -518,7 +527,7 @@ int ft_printf_dispatch(char spec, va_list args, t_flags flags) {
         return ft_printf_putfloat(va_arg(args, double), flags);
     else if (spec == '%')
         return ft_printf_putpercent(flags);
-    return 0;
+    return (0);
 }
 
 int ft_printf(const char *format, ...) {
@@ -535,6 +544,6 @@ int ft_printf(const char *format, ...) {
         }
     }
     va_end(args);
-    return total;
+    return (total);
 }  
 

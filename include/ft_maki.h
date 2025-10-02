@@ -8,20 +8,21 @@
 #include <unistd.h>
 #include <sys/types.h> //ssize_t
 
-#define COLOR_RESET			"\033[0m"
-#define COLOR_GREEN			"\033[32m"   // Verde para 'S'
-#define COLOR_RED			"\033[31m"   // Vermelho para 'G'
-#define COLOR_GRAY			"\033[90m"   // Cinza para '#'
-#define COLOR_YELLOW    	"\033[33m"   // Amarelo para '*'
-#define COLOR_CYAN			"\033[36m"   // Ciano para '.'
-#define COLOR_BLUE			"\033[34m"   // Azul para '~'
-#define COLOR_LIGHT_GREEN   "\033[92m"   // Verde claro para 'g'
-#define COLOR_MOGENTA		"\033[35m"  // Magenta para 'm'
-#define COLOR_ORANGE		"\033[38;2;255;165;0m"
-#define BLOCK_SIZE sizeof(t_block)
-#define MMAP_THRESHOLD (128 * 1024) // 128 KB
-#define ALIGNMENT 16
+#define FT_COLOR_RESET			"\033[0m"
+#define FT_COLOR_GREEN			"\033[32m"   // Verde para 'S'
+#define FT_COLOR_RED			"\033[31m"   // Vermelho para 'G'
+#define FT_COLOR_GRAY			"\033[90m"   // Cinza para '#'
+#define FT_COLOR_YELLOW    	"\033[33m"   // Amarelo para '*'
+#define FT_COLOR_CYAN			"\033[36m"   // Ciano para '.'
+#define FT_COLOR_BLUE			"\033[34m"   // Azul para '~'
+#define FT_COLOR_LIGHT_GREEN   "\033[92m"   // Verde claro para 'g'
+#define FT_COLOR_MOGENTA		"\033[35m"  // Magenta para 'm'
+#define FT_COLOR_ORANGE		"\033[38;2;255;165;0m"
+#define FT_BLOCK_SIZE sizeof(t_block)
+#define FT_MMAP_THRESHOLD (128 * 1024) // 128 KB
+#define FT_ALIGNMENT 16
 #define ft_offsetof(type, member) ((size_t) &(((type *)0)->member))
+#define FT_NULL ((void*)0)
 
 //Is used for RAM magenement
 typedef struct		s_block {
@@ -199,8 +200,5 @@ void				ft_lst_print_float_wrapper(void *data);
 void				ft_lst_print_double_wrapper(void *data);
 //ft_lst_wrappers.c end
 
-//need to be implemented
-//ft_isnan()
-//ft_atof()
 #endif
 

@@ -19,7 +19,7 @@ void	*ft_memccpy(void *dest, const void *src, int c, size_t n)
 		}
 		i++;
 	}
-	return (NULL);
+	return (FT_NULL);
 }
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
@@ -59,7 +59,7 @@ void	*ft_memchr(const void *s, int c, size_t n)
 			return ((void *)s + i);
 		i++;
 	}
-	return (NULL);
+	return (FT_NULL);
 }
 
 int		ft_memcmp(const void *s1, const void *s2, size_t n)
@@ -171,7 +171,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 			return ((char *)big);
 		big++;
 	}
-	return (NULL);
+	return (FT_NULL);
 }
 
 int		ft_strncmp(const char *s1, const char *s2, size_t n)
@@ -254,14 +254,21 @@ int		ft_isxdigit(int	c)
 {
     // Check if c is a decimal digit
     if (c >= '0' && c <= '9')
-        return 1;
+    {
+		return (1);
+	}    
     // Check if c is a lowercase hexadecimal digit
     if (c >= 'a' && c <= 'f')
-        return 1;
+	{
+        return (1);
+	}
     // Check if c is an uppercase hexadecimal digit
     if (c >= 'A' && c <= 'F')
-        return 1;
-    return 0; // Otherwise, not a hex digit
+	{
+        return (1);
+	}
+    // Otherwise, not a hex digit
+	return (0); 
 }
 
 /* -----------------------------
@@ -271,42 +278,42 @@ int		ft_isxdigit(int	c)
 static inline uint64_t double_to_u64(double x) {
     uint64_t bits;
     ft_memcpy(&bits, &x, sizeof(bits));
-    return bits;
+    return (bits);
 }
 
 static inline uint32_t float_to_u32(float x) {
     uint32_t bits;
     ft_memcpy(&bits, &x, sizeof(bits));
-    return bits;
+    return (bits);
 }
 
 static inline int isnan_double_custom(double x) {
     uint64_t bits = double_to_u64(x);
     const uint64_t EXP_MASK = 0x7FF0000000000000ULL;
     const uint64_t FRAC_MASK = 0x000FFFFFFFFFFFFFULL;
-    return ((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0ULL);
+    return (((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0ULL));
 }
 
 static inline int isnan_float_custom(float x) {
     uint32_t bits = float_to_u32(x);
     const uint32_t EXP_MASK = 0x7F800000U;
     const uint32_t FRAC_MASK = 0x007FFFFFU;
-    return ((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0U);
+    return (((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0U));
 }
 
 int	ft_isnanf(float x) {
-    return isnan_float_custom(x);
+    return (isnan_float_custom(x));
 }
 
 int	ft_isnan(double x) {
-    return isnan_double_custom(x);
+    return (isnan_double_custom(x));
 }
 
 int	ft_isinf(double x) {
     double y = x - x;
-    return (y != y && !(x != x)); // se x-x dá NaN mas x não é NaN -> é inf
+	// se x-x dá NaN mas x não é NaN -> é inf
+    return ((y != y && !(x != x))); 
 }
-
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -314,9 +321,9 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	char	*buff;
 
 	if (!s)
-		return (NULL);
+		return (FT_NULL);
 	if (!(buff = (char *)ft_malloc(sizeof(char) * (len + 1))))
-		return (NULL);
+		return (FT_NULL);
 	i = 0;
 	if (start < ft_strlen(s))
 	{
@@ -337,10 +344,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*buff;
 
 	if (!s1 || !s2)
-		return (NULL);
+		return (FT_NULL);
 	if (!(buff = (char *)ft_malloc(sizeof(char) *
 					(ft_strlen(s1) + ft_strlen(s2) + 1))))
-		return (NULL);
+		return (FT_NULL);
 	i = 0;
 	j = 0;
 	while (i < ft_strlen(s1))
@@ -364,14 +371,14 @@ char	*ft_strtrim(char const *s1, char const *set)
 	char	*buff;
 
 	if (!s1 || !set)
-		return (NULL);
+		return (FT_NULL);
 	while (ft_strchr(set, *s1) && *s1 != '\0')
 		s1++;
 	len_s1 = ft_strlen(s1);
 	while (ft_strchr(set, *(s1 + len_s1)) && len_s1 > 0)
 		len_s1--;
 	if (!(buff = ft_substr(s1, 0, len_s1 + 1)))
-		return (NULL);
+		return (FT_NULL);
 	return (buff);
 }
 
@@ -401,11 +408,11 @@ static char	**free_buff(char **buff, size_t j)
 	while (j-- > 0)
 	{
 		ft_free(buff[j]);
-		buff[j] = NULL;
+		buff[j] = FT_NULL;
 	}
 	ft_free(buff);
-	buff = NULL;
-	return (NULL);
+	buff = FT_NULL;
+	return (FT_NULL);
 }
 
 char	**ft_split(char const *s, char c)
@@ -416,7 +423,7 @@ char	**ft_split(char const *s, char c)
 	size_t	word_num;
 
 	if (!s || !(buff = (char **)ft_malloc(sizeof(char *) * (count_word(s, c) + 1))))
-		return (NULL);
+		return (FT_NULL);
 	j = 0;
 	word_num = count_word(s, c);
 	while (*s && j < word_num)
@@ -452,7 +459,7 @@ static int	count_digits(int n)
 		n_abs /= 10;
 		count++;
 	}
-	return count;
+	return (count);
 }
 
 char	*ft_itoa(int n)
@@ -466,7 +473,7 @@ char	*ft_itoa(int n)
 	len = digits + (n < 0); // +1 if negative (for the '-')
 	buff = ft_malloc(sizeof(char) * (len + 1));
 	if (!buff)
-		return NULL;
+		return (FT_NULL);
 
 	buff[len] = '\0';
 	n_abs = (n < 0) ? -(unsigned int)n : (unsigned int)n;
@@ -480,7 +487,7 @@ char	*ft_itoa(int n)
 	if (n < 0)
 		buff[0] = '-';
 
-	return buff;
+	return (buff);
 }
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
@@ -490,7 +497,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 
 	i = 0;
 	if (!s || !f || !(buff = (char *)ft_malloc(sizeof(char) * (ft_strlen(s) + 1))))
-		return (NULL);
+		return (FT_NULL);
 	while (i < ft_strlen(s))
 	{
 		buff[i] = f(i, s[i]);
@@ -537,9 +544,9 @@ t_list		*ft_lstnew(void *content)
 	t_list	*head;
 
 	if (!(head = (t_list *)ft_malloc(sizeof(t_list))))
-		return (NULL);
+		return (FT_NULL);
 	head->content = content;
-	head->next = NULL;
+	head->next = FT_NULL;
 	return (head);
 }
 
@@ -591,7 +598,7 @@ void	ft_lstadd_back(t_list **lst, t_list *lstnew)
 {
 	t_list *last;
 
-	if (*lst == NULL)
+	if (*lst == FT_NULL)
 	{
 		*lst = lstnew;
 		return ;
@@ -624,14 +631,14 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 		*lst = (*lst)->next;
 		ft_free(temp);
 	}
-	*lst = NULL;
+	*lst = FT_NULL;
 }
 
 void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
 	if (lst && f)
 	{
-		while (lst != NULL)
+		while (lst != FT_NULL)
 		{
 			f(lst->content);
 			lst = lst->next;
@@ -645,14 +652,14 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	t_list *newlist;
 
 	if (!lst || !f)
-		return (NULL);
-	newlist = NULL;
+		return (FT_NULL);
+	newlist = FT_NULL;
 	while (lst)
 	{
 		if (!(newelem = ft_lstnew(f(lst->content))))
 		{
 			ft_lstclear(&newlist, del);
-			return (NULL);
+			return (FT_NULL);
 		}
 		ft_lstadd_back(&newlist, newelem);
 		lst = lst->next;
@@ -662,19 +669,19 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 
 t_list  *ft_lstmapi(t_list *lst, void *(*f)(void *, int), void (*del)(void *))
 {
-	t_list	*newlist = NULL;
+	t_list	*newlist = FT_NULL;
 	t_list	*newelem;
 	int		index = 0;
 
 	if (!lst || !f)
-		return (NULL);
+		return (FT_NULL);
 	while (lst)
 	{
 		newelem = ft_lstnew(f(lst->content, index));
 		if (!newelem)
 		{
 			ft_lstclear(&newlist, del);
-			return (NULL);
+			return (FT_NULL);
 		}
 		ft_lstadd_back(&newlist, newelem);
 		lst = lst->next;

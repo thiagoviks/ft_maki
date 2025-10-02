@@ -1,13 +1,13 @@
 #include "../include/ft_maki.h"
 
 //used to manage RAM by doubled linked list
-static t_block *head = NULL; 
+static t_block *head = FT_NULL; 
 //is used on ft_strtok 
-static char *saveptr = NULL;
+static char *saveptr = FT_NULL;
 
 static size_t align(size_t size)
 {
-    return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
+    return ((size + (FT_ALIGNMENT - 1)) & ~(FT_ALIGNMENT - 1));
 }
 
 ssize_t ft_write(int fd, const void *buf, size_t len)
@@ -24,7 +24,7 @@ ssize_t ft_write(int fd, const void *buf, size_t len)
 		: "r" ((long)fd), "r" (buf), "r" ((long)len)
 		: "%rax", "%rdi", "%rsi", "%rdx"
 	);
-    return ret;
+    return (ret);
 }
 
 ssize_t ft_read(int fd, void *buf, size_t count)
@@ -37,7 +37,7 @@ ssize_t ft_read(int fd, void *buf, size_t count)
         : "D"(fd), "S"(buf), "d"(count)
         : "rcx", "r11", "memory"
     );
-    return ret;
+    return (ret);
 }
 
 int ft_open(const char *pathname, int flags, int mode)
@@ -50,7 +50,7 @@ int ft_open(const char *pathname, int flags, int mode)
         : "D"(pathname), "S"(flags), "d"(mode)
         : "rcx", "r11", "memory"
     );
-    return ret;
+    return (ret);
 }
 
 int ft_close(int fd)
@@ -63,7 +63,7 @@ int ft_close(int fd)
         : "D"(fd)
         : "rcx", "r11", "memory"
     );
-    return ret;
+    return (ret);
 }
 
 void ft_exit(long code)
@@ -100,7 +100,7 @@ char *ft_strcpy(char *dst, const char *src) {
     while (*src)
         *dst++ = *src++;
     *dst = '\0';
-    return ret;
+    return (ret);
 }
 
 char *ft_strncpy(char *dest, const char *src, unsigned int n) {
@@ -118,7 +118,7 @@ char *ft_strncpy(char *dest, const char *src, unsigned int n) {
         i++;
     }
 
-    return dest;
+    return (dest);
 }
 
 size_t ft_strlen(const char *s)
@@ -126,12 +126,12 @@ size_t ft_strlen(const char *s)
     size_t len = 0;
     while (s[len])
         len++;
-    return len;
+    return (len);
 }
 
 void	ft_putchar(char c)
 {
-	write(1, &c, 1);
+	ft_write(1, &c, 1);
 }
 
 void    ft_putstr(const char *str)
@@ -163,19 +163,19 @@ int ft_atoi(const char *str) {
         str++;
     }
 
-    return result * sign;
+    return (result * sign);
 }
 
 static int char_to_digit(char c) {
     if (c >= '0' && c <= '9') return c - '0';
     if (c >= 'a' && c <= 'f') return c - 'a' + 10;
     if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-    return -1;
+    return (-1);
 }
 
 int ft_atoi_base(const char *str, int base) {
     if (base < 2 || base > 16)
-        return 0;
+        return (0);
 
     int result = 0;
     int sign = 1;
@@ -198,7 +198,7 @@ int ft_atoi_base(const char *str, int base) {
         str++;
     }
 
-    return result * sign;
+    return (result * sign);
 }
 
 int ft_atoi_auto(const char *str) {
@@ -209,12 +209,12 @@ int ft_atoi_auto(const char *str) {
     // Detect base prefix
     if (*str == '0') {
         if (*(str + 1) == 'x' || *(str + 1) == 'X')
-            return ft_atoi_base(str + 2, 16); // hex
+            return (ft_atoi_base(str + 2, 16)); // hex
         else if (*(str + 1) >= '0' && *(str + 1) <= '7')
-            return ft_atoi_base(str + 1, 8);  // octal
+            return (ft_atoi_base(str + 1, 8));  // octal
     }
 
-    return ft_atoi_base(str, 10); // default decimal
+    return (ft_atoi_base(str, 10)); // default decimal
 }
 
 /* -----------------------------
@@ -243,7 +243,7 @@ static double pow10_int(int exp) {
             e >>= 1;
         }
     }
-    return result;
+    return (result);
 }
 
 static double pow2_int(int exp) {
@@ -263,7 +263,7 @@ static double pow2_int(int exp) {
             e >>= 1;
         }
     }
-    return result;
+    return (result);
 }
 
 static int starts_with_ci(const char *s, const char *prefix) {
@@ -271,7 +271,7 @@ static int starts_with_ci(const char *s, const char *prefix) {
         if (ft_tolower((unsigned char)*s) != ft_tolower((unsigned char)*prefix)) return 0;
         s++; prefix++;
     }
-    return 1;
+    return (1);
 }
 
 /* parse hexadecimal float */
@@ -323,7 +323,7 @@ static double parse_hex_float(const char *p, int sign) {
 
     int final_exp = exp_sign * exp_val;
     if (final_exp != 0) value = value * pow2_int(final_exp);
-    return sign * value;
+    return (sign * value);
 }
 
 double  ft_atof(const char *s)
@@ -339,18 +339,18 @@ double  ft_atof(const char *s)
         uint64_t nan_bits = 0x7FF8000000000001ULL;
         double nanval;
         ft_memcpy(&nanval, &nan_bits, sizeof(nanval));
-        return nanval * sign;
+        return (nanval * sign);
     }
     if (starts_with_ci(p, "inf")) {
         uint64_t inf_bits = 0x7FF0000000000000ULL;
         double infval;
         ft_memcpy(&infval, &inf_bits, sizeof(infval));
-        return infval * sign;
+        return (infval * sign);
     }
 
     // detect hex float
     if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
-        return parse_hex_float(p + 2, sign);
+        return (parse_hex_float(p + 2, sign));
     }
 
     double value = 0.0;
@@ -387,7 +387,7 @@ double  ft_atof(const char *s)
     int final_exp = exp_sign * exp_val;
     if (final_exp != 0) value *= pow10_int(final_exp);
 
-    return sign * value;
+    return (sign * value);
 }
 
 int ft_strcmp(const char *s1, const char *s2)
@@ -410,7 +410,7 @@ char    *ft_strdup(const char *src)
 
     str = ft_malloc(sizeof(char) * (ft_strlen((char *)src) + 1));
     if (!str)
-        return (NULL);
+        return (FT_NULL);
     i = 0;
     while (src[i])
     {
@@ -424,24 +424,24 @@ char    *ft_strdup(const char *src)
 static int is_delim(char c, const char *delim) {
 	while (*delim) {
 		if (c == *delim)
-			return 1;
+			return (1);
 		delim++;
 	}
-	return 0;
+	return (0);
 }
 
 char *ft_strtok(char *str, const char *delim) {
 	if (str)
 		saveptr = str;
 	else if (!saveptr)
-		return NULL;
+		return (FT_NULL);
 
 	// Pula delimitadores iniciais
 	while (*saveptr && is_delim(*saveptr, delim))
 		saveptr++;
 
 	if (*saveptr == '\0')
-		return NULL;
+		return (FT_NULL);
 
 	char *token_start = saveptr;
 
@@ -453,7 +453,7 @@ char *ft_strtok(char *str, const char *delim) {
 		saveptr++;
 	}
 
-	return token_start;
+	return (token_start);
 }
 
 char *ft_strpbrk(const char *s, const char *accept) {
@@ -466,7 +466,7 @@ char *ft_strpbrk(const char *s, const char *accept) {
         }
         s++;
     }
-    return NULL;
+    return (FT_NULL);
 }
 
 static t_block *find_free_block(size_t size)
@@ -476,11 +476,11 @@ static t_block *find_free_block(size_t size)
     {
         if (current->free && current->size >= size)
         {
-            return current;
+            return (current);
         }
         current = current->next;
     }
-    return NULL;
+    return (FT_NULL);
 }
 
 static t_block *request_space(size_t size)
@@ -488,7 +488,7 @@ static t_block *request_space(size_t size)
     void *addr;
     t_block *block;
 
-    if (size >= MMAP_THRESHOLD) {
+    if (size >= FT_MMAP_THRESHOLD) {
         size_t total = sizeof(t_block) + size;
 
         asm volatile(
@@ -508,17 +508,17 @@ static t_block *request_space(size_t size)
 
         if (addr == (void *)-1)
         {
-            return NULL;
+            return (FT_NULL);
         }
 
         block = (t_block *)addr;
         block->size = size;
         block->free = 0;
         block->is_mmap = 1;
-        block->next = NULL;
-        block->prev = NULL;
+        block->next = FT_NULL;
+        block->prev = FT_NULL;
 
-        return block;
+        return (block);
     }
     // syscall brk
     void *old_brk;
@@ -544,14 +544,14 @@ static t_block *request_space(size_t size)
         : "rax", "rdi"
     );
     if (result != new_brk)
-        return NULL;
+        return (FT_NULL);
 
     block = (t_block *)old_brk;
     block->size = size;
     block->free = 0;
     block->is_mmap = 0;
-    block->next = NULL;
-    block->prev = NULL;
+    block->next = FT_NULL;
+    block->prev = FT_NULL;
 
     if (!head)
         head = block;
@@ -567,21 +567,21 @@ static t_block *request_space(size_t size)
 }
 
 void *ft_malloc(size_t size) {
-    if (size == 0) return NULL;
+    if (size == 0) return (FT_NULL);
 
     size = align(size);
     t_block *block = find_free_block(size);
 
     if (block) {
         block->free = 0;
-        return (void *)(block + 1);
+        return ((void *)(block + 1));
     }
 
     block = request_space(size);
     if (!block)
-        return NULL;
+        return (FT_NULL);
 
-    return (void *)(block + 1);
+    return ((void *)(block + 1));
 }
 
 static void coalesce(t_block *block) {
@@ -628,7 +628,7 @@ void *ft_memset(void *ptr, int value, size_t num) {
         *p = (unsigned char)value;  // Set each byte to the given value
         p++;  // Move to the next byte
     }
-    return ptr;  // Return the original pointer
+    return (ptr);  // Return the original pointer
 }
 
 // Custom memcpy implementation
@@ -640,7 +640,7 @@ void *ft_memcpy(void *dest, const void *src, size_t num) {
         d++;  // Move to the next byte in the destination
         s++;  // Move to the next byte in the source
     }
-    return dest;  // Return the destination pointer
+    return (dest);  // Return the destination pointer
 }
 
 
@@ -649,25 +649,29 @@ void *ft_calloc(size_t nmemb, size_t size) {
     size_t total_size = nmemb * size; // Calculate total size required
     void *ptr = ft_malloc(total_size); // Allocate memory using malloc
     if (ptr) ft_memset(ptr, 0, total_size); // Initialize the allocated memory to 0
-    return ptr;
+    return (ptr);
 }
 
 // Custom realloc implementation
 void *ft_realloc(void *ptr, size_t size) {
     if (!ptr) return ft_malloc(size); // If the pointer is NULL, behave like malloc()
-    if (size == 0) { ft_free(ptr); return NULL; } // If size is 0, free the memory and return NULL
+    if (size == 0) 
+    { 
+        ft_free(ptr);
+        return (FT_NULL);
+    } // If size is 0, free the memory and return NULL
 
     t_block *block = (t_block*)ptr - 1;
-    if (block->size >= size) return ptr; // If the current block is already large enough, return the same pointer
+    if (block->size >= size) return (ptr); // If the current block is already large enough, return the same pointer
 
     // If the block cannot be expanded, allocate a new block with the requested size
     void *new_ptr = ft_malloc(size);
-    if (!new_ptr) return NULL; // If malloc fails, return NULL
+    if (!new_ptr) return (FT_NULL); // If malloc fails, return NULL
 
     // Copy the data from the old block to the new block
     ft_memcpy(new_ptr, ptr, block->size);
     ft_free(ptr); // Free the old block
-    return new_ptr; // Return the new block
+    return (new_ptr); // Return the new block
 }
 
 void	ft_reverse(char *str, int length)
@@ -735,14 +739,14 @@ void	ft_map(int *arr, size_t size, int (*func)(int))
 ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 {
 	if (!lineptr || !n)
-		return -1;
+		return (-1);
 
-	if (*lineptr == NULL || *n == 0)
+	if (*lineptr == FT_NULL || *n == 0)
 	{
 		*n = 128;
 		*lineptr = (char *)ft_malloc(*n);
 		if (!*lineptr)
-			return -1;
+			return (-1);
 	}
 
 	size_t i = 0;
@@ -761,7 +765,7 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 			size_t new_size = *n * 2;
 			char *new_ptr = (char *)ft_realloc(*lineptr, new_size);
 			if (!new_ptr)
-				return -1;
+				return (-1);
 			*lineptr = new_ptr;
 			*n = new_size;
 		}
@@ -772,10 +776,10 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd)
 	}
 
 	if (i == 0)
-		return -1;
+		return (-1);
 
 	(*lineptr)[i] = '\0';
-	return i;
+	return (i);
 }
 
 //is used on ft_perror start
@@ -789,80 +793,80 @@ void	ft_set_language(const char *lang) {
 //Function for each language
 static const char	*msg_success(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Sucesso";
-	return "Success";
+		return ("Sucesso");
+	return ("Success");
 }
 
 static const char	*msg_operation_not_permitted(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Operação nao permitida";
-	return "Operation not permitted";
+		return ("Operação nao permitida");
+	return ("Operation not permitted");
 }
 
 static const char	*msg_no_such_file_or_directory(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Arquivo ou diretorio inexistente";
-	return "No such file or directory";
+		return ("Arquivo ou diretorio inexistente");
+	return ("No such file or directory");
 }
 
 static const char	*msg_no_such_process(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Nao existe esse processo";
-	return "No such process";
+		return ("Nao existe esse processo");
+	return ("No such process");
 }
 
 static const char	*msg_interrupted_system_call(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Chamada de sistema interrompida";
-	return "Interrupted system call";
+		return ("Chamada de sistema interrompida");
+	return ("Interrupted system call");
 }
 
 static const char	*msg_input_output_error(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Erro de entrada e saida";
-	return "Input/output error";
+		return ("Erro de entrada e saida");
+	return ("Input/output error");
 }
 
 static const char	*msg_no_such_device_or_address(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Nao existe tal dispositivo ou endereco";
-	return "No such device or address";
+		return ("Nao existe tal dispositivo ou endereco");
+	return ("No such device or address");
 }
 
 static const char	*msg_argument_list_too_long(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Lista de argumentos muito longa";
-	return "Argument list too long";
+		return ("Lista de argumentos muito longa");
+	return ("Argument list too long");
 }
 
 static const char	*msg_exec_format_error(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Erro de Formato do exec";
-	return "Exec format error";
+		return ("Erro de Formato do exec");
+	return ("Exec format error");
 }
 
 static const char	*msg_bad_file_descriptor(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Erro de descricao do arquivo";
-	return "Bad file descriptor";
+		return ("Erro de descricao do arquivo");
+	return ("Bad file descriptor");
 }
 
 static const char	*msg_no_child_processes(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Nenhum processo filho";
-	return "No child processes";
+		return ("Nenhum processo filho");
+	return ("No child processes");
 }
 
 static const char	*msg_out_of_memory(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Sem memoria";
-	return "Out of memory";
+		return ("Sem memoria");
+	return ("Out of memory");
 }
 
 static const char	*msg_permission_denied(void) {
 	if (ft_strcmp(current_lang, "pt") == 0)
-		return "Permissao negada";
-	return "Permission denied";
+		return ("Permissao negada");
+	return ("Permission denied");
 }
 
 static const t_error g_errors[] = {
@@ -898,9 +902,9 @@ static const char	*ft_get_error_message(int err) {
 		else
 			right = mid - 1;
 	}
-	return (ft_strcmp(current_lang, "pt") == 0)
+	return ((ft_strcmp(current_lang, "pt") == 0)
 		? "Erro desconhecido"
-		: "Unknown error";
+		: "Unknown error");
 }
 
 void ft_perror(const char *str) {
@@ -911,7 +915,7 @@ void ft_perror(const char *str) {
 
 const char *ft_strerror(int err)
 {
-    return ft_get_error_message(err);
+    return (ft_get_error_message(err));
 }
 
 void ft_list_all_errors(void)
@@ -950,7 +954,7 @@ int ft_sscanf(const char *str, const char *format, ...) {
         format++;
     }
     va_end(args);
-    return assigned;
+    return (assigned);
 }
 
 char	*ft_utoa_base(unsigned int value, char *buf, int base) {
@@ -960,14 +964,14 @@ char	*ft_utoa_base(unsigned int value, char *buf, int base) {
 
     if (base < 2 || base > 16) {
         buf[0] = '\0';
-        return buf;
+        return (buf);
     }
 
     // Special case for 0
     if (value == 0) {
         buf[0] = '0';
         buf[1] = '\0';
-        return buf;
+        return (buf);
     }
 
     while (value > 0) {
@@ -980,16 +984,16 @@ char	*ft_utoa_base(unsigned int value, char *buf, int base) {
         buf[j] = tmp[i - j - 1];
     buf[i] = '\0';
 
-    return buf;
+    return (buf);
 }
 
 char	*ft_itoa_base(int value, char *buf, int base) {
     if (value < 0 && base == 10) {
         *buf++ = '-';
         ft_utoa_base((unsigned int)(-value), buf, base);
-        return buf - 1;
+        return (buf - 1);
     } else {
-        return ft_utoa_base((unsigned int)value, buf, base);
+        return (ft_utoa_base((unsigned int)value, buf, base));
     }
 }
 
@@ -1032,5 +1036,5 @@ int ft_sprintf(char *buf, const char *fmt, ...) {
 
     *p = '\0';
     va_end(args);
-    return (int)(p - buf);
+    return ((int)(p - buf));
 }
