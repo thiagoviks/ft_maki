@@ -294,12 +294,17 @@ static inline int isnan_float_custom(float x) {
     return ((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0U);
 }
 
-int ft_isnanf(float x) {
+int	ft_isnanf(float x) {
     return isnan_float_custom(x);
 }
 
-int ft_isnan(double x) {
+int	ft_isnan(double x) {
     return isnan_double_custom(x);
+}
+
+int	ft_isinf(double x) {
+    double y = x - x;
+    return (y != y && !(x != x)); // se x-x dá NaN mas x não é NaN -> é inf
 }
 
 

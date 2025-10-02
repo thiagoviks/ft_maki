@@ -157,6 +157,7 @@ int					ft_isspace(int c);
 int					ft_isxdigit(int	c);
 int					ft_isnanf(float x);
 int					ft_isnan(double x);
+int					ft_isinf(double x);
 
 char				*ft_substr(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
