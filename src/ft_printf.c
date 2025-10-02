@@ -183,20 +183,74 @@ long long ft_printf_power10(int n) {
 //     return len;
 // }
 
+//lack support to big values like .17f
+// int ft_printf_putfloat(double n, t_flags flags) {
+//     int len = 0;
+
+//     // Always work internally with long double for better precision
+//     long double val = (long double)n;
+
+//     // Handle special values
+//     if (val != val) // NaN
+//         return ft_write(1, "nan", 3);
+//     if (val == 1.0L / 0.0L) // +inf
+//         return ft_write(1, "inf", 3);
+//     if (val == -1.0L / 0.0L) // -inf
+//         return ft_write(1, "-inf", 4);
+
+//     // Handle sign
+//     if (val < 0.0L) {
+//         len += ft_write(1, "-", 1);
+//         val = -val;
+//     }
+
+//     // Default precision = 6 if not specified
+//     int precision = flags.precision_specified ? flags.precision : 6;
+
+//     // Extract integer part
+//     long long int_part = (long long)val;
+
+//     // Compute 10^precision for fractional scaling
+//     long long pow10 = ft_printf_power10(precision);
+
+//     // Fractional part in long double, rounded correctly
+//     long double fraction = val - (long double)int_part;
+//     long long frac = (long long)(fraction * (long double)pow10 + 0.5L);
+
+//     // If rounding carries into the integer part (e.g. 9.999 -> 10.000)
+//     if (frac >= pow10) {
+//         int_part++;
+//         frac -= pow10;
+//     }
+
+//     // Print integer part
+//     len += ft_printf_putnbr(int_part, (t_flags){0});
+
+//     // Print fractional part only if precision > 0
+//     if (precision > 0) {
+//         len += ft_write(1, ".", 1);
+
+//         // Count digits of the fractional part
+//         int frac_digits = ft_printf_unumlen(frac);
+
+//         // Add leading zeros if needed (e.g. 0.000123)
+//         len += ft_printf_pad('0', precision - frac_digits);
+
+//         // Print fractional digits
+//         len += ft_printf_putunbr(frac, (t_flags){0});
+//     }
+
+//     return len;
+// }
 
 int ft_printf_putfloat(double n, t_flags flags) {
     int len = 0;
-
-    // Always work internally with long double for better precision
     long double val = (long double)n;
 
     // Handle special values
-    if (val != val) // NaN
-        return ft_write(1, "nan", 3);
-    if (val == 1.0L / 0.0L) // +inf
-        return ft_write(1, "inf", 3);
-    if (val == -1.0L / 0.0L) // -inf
-        return ft_write(1, "-inf", 4);
+    if (val != val) return ft_write(1, "nan", 3);
+    if (val == 1.0L/0.0L) return ft_write(1, "inf", 3);
+    if (val == -1.0L/0.0L) return ft_write(1, "-inf", 4);
 
     // Handle sign
     if (val < 0.0L) {
@@ -204,45 +258,51 @@ int ft_printf_putfloat(double n, t_flags flags) {
         val = -val;
     }
 
-    // Default precision = 6 if not specified
+    // Default precision = 6
     int precision = flags.precision_specified ? flags.precision : 6;
+
+    // Handle very small or very large numbers using scientific notation
+    if ((val != 0.0L && (val >= 1e15L || val <= 1e-6L))) {
+        int exp = 0;
+        while (val >= 10.0L) { val /= 10.0L; exp++; }
+        while (val > 0.0L && val < 1.0L) { val *= 10.0L; exp--; }
+
+        // Print mantissa
+        len += ft_printf_putfloat((double)val, (t_flags){.precision_specified = 1, .precision = precision});
+
+        // Print exponent
+        len += ft_write(1, "e", 1);
+        if (exp >= 0) len += ft_write(1, "+", 1);
+        else { len += ft_write(1, "-", 1); exp = -exp; }
+
+        // Print exponent digits
+        len += ft_printf_putnbr(exp, (t_flags){0});
+        return len;
+    }
 
     // Extract integer part
     long long int_part = (long long)val;
-
-    // Compute 10^precision for fractional scaling
     long long pow10 = ft_printf_power10(precision);
 
-    // Fractional part in long double, rounded correctly
+    // Fractional part with rounding
     long double fraction = val - (long double)int_part;
     long long frac = (long long)(fraction * (long double)pow10 + 0.5L);
 
-    // If rounding carries into the integer part (e.g. 9.999 -> 10.000)
-    if (frac >= pow10) {
-        int_part++;
-        frac -= pow10;
-    }
+    if (frac >= pow10) { int_part++; frac -= pow10; }
 
     // Print integer part
     len += ft_printf_putnbr(int_part, (t_flags){0});
 
-    // Print fractional part only if precision > 0
+    // Print fractional part
     if (precision > 0) {
         len += ft_write(1, ".", 1);
-
-        // Count digits of the fractional part
         int frac_digits = ft_printf_unumlen(frac);
-
-        // Add leading zeros if needed (e.g. 0.000123)
         len += ft_printf_pad('0', precision - frac_digits);
-
-        // Print fractional digits
         len += ft_printf_putunbr(frac, (t_flags){0});
     }
 
     return len;
 }
-
 
 int ft_printf_putpercent(t_flags flags) {
     int len = 0;
