@@ -103,6 +103,24 @@ char *ft_strcpy(char *dst, const char *src) {
     return ret;
 }
 
+char *ft_strncpy(char *dest, const char *src, unsigned int n) {
+    unsigned int i = 0;
+
+    // copy up to n or until '\0' is found
+    while (i < n && src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+
+    // fill with '\0' if there is space left
+    while (i < n) {
+        dest[i] = '\0';
+        i++;
+    }
+
+    return dest;
+}
+
 size_t ft_strlen(const char *s)
 {
     size_t len = 0;
