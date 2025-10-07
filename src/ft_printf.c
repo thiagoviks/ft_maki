@@ -400,9 +400,15 @@ int ft_printf_dispatch(char spec, va_list args, t_flags flags)
     else if (spec == 's')
         return ft_printf_putstr(va_arg(args, char *), flags);
     else if (spec == 'd' || spec == 'i')
-        return ft_printf_putnbr(va_arg(args, int), flags);
+	{
+        // if you want long long, use va_arg(args, long long)
+		return ft_printf_putnbr(va_arg(args, int), flags);
+	}
     else if (spec == 'u')
-        return ft_printf_putunbr(va_arg(args, unsigned int), flags);
+	{
+		// or unsigned long if changing the function
+		return ft_printf_putunbr(va_arg(args, unsigned int), flags);
+	}
     else if (spec == 'x')
         return ft_printf_puthex(va_arg(args, unsigned int), flags, 0);
     else if (spec == 'X')
