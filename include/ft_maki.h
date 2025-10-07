@@ -119,7 +119,7 @@ int     			ft_printf_putchar(char c);
 int     			ft_printf(const char *format, ...);
 int     			ft_printf_putstr(char *s, t_flags flags);
 int     			ft_printf_putnbr(long long n, t_flags flags);
-int     			ft_printf_putunbr(unsigned int n, t_flags flags);
+int     			ft_printf_putunbr(unsigned long n, t_flags flags);
 int     			ft_printf_puthex(unsigned long n, t_flags flags, int uppercase);
 int     			ft_printf_putptr(void *ptr, t_flags flags);
 int     			ft_printf_putfloat(double n, t_flags flags);
