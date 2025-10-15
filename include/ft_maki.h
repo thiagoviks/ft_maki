@@ -24,6 +24,20 @@
 #define FT_ALIGNMENT 16
 #define ft_offsetof(type, member) ((size_t)&(((type *)0)->member))
 #define FT_NULL ((void *)0)
+#define ft_size_t long unsigned int
+#define ft_ssize_t long int
+
+// used at ft_fflush
+//  Common error codes (compatible with POSIX meanings)
+#define FT_EPERM 1   // Operation not permitted
+#define FT_ENOENT 2  // No such file or directory
+#define FT_EIO 5     // I/O error
+#define FT_EBADF 9   // Bad file descriptor
+#define FT_EINVAL 22 // Invalid argument
+#define FT_EPIPE 32  // Broken pipe
+
+// Global error variable
+extern int ft_errno;
 
 // Is used for RAM magenement
 typedef struct s_block {
@@ -58,6 +72,50 @@ typedef struct s_error {
   int code;
   const char *(*get_message)(void); // support to i18n
 } t_error;
+
+// struct to ft_fflush
+#define FT_BUFSIZ 1024
+
+#define FT_MODE_READ 0
+#define FT_MODE_WRITE 1
+
+#define FT_IOFBF 0 // Full buffering
+#define FT_IOLBF 1 // Line buffering
+#define FT_IONBF 2 // No buffering
+
+/* Standard file descriptors.  */
+#define FT_STDIN_FILENO 0  /* Standard input.  */
+#define FT_STDOUT_FILENO 1 /* Standard output.  */
+#define FT_STDERR_FILENO 2 /* Standard error output.  */
+#define FT_EOF (-1)
+
+#define FT_O_RDONLY 00
+#define FT_O_WRONLY 01
+#define FT_O_RDWR 02
+#define FT_O_CREAT 0100  /* Not fcntl.  */
+#define FT_O_TRUNC 01000 /* Not fcntl.  */
+#define FT_O_APPEND 02000
+
+typedef struct S_FT_FILE {
+  int fd;
+  char buffer[FT_BUFSIZ];
+  ft_size_t buf_pos;
+  ft_size_t buf_len;
+  int mode;     // FT_MODE_READ or FT_MODE_WRITE
+  int buf_mode; // FT_IOFBF, FT_IOLBF, FT_IONBF
+  int error;
+  int eof;
+  struct S_FT_FILE *next;
+} T_FT_FILE;
+
+extern T_FT_FILE *ft_stdout;
+extern T_FT_FILE *ft_stdin;
+extern T_FT_FILE *ft_stderr;
+
+#define ft_stdout ft_stdout
+#define ft_stdin ft_stdin
+#define ft_stderr ft_stderr
+// ft_fflush
 
 // ft_maki.c start
 // make syscall
@@ -141,7 +199,7 @@ static inline int ft_printf_dispatch(char spec, va_list *args, t_flags flags);
 // NON-INLINED FUNCTIONS (EXPORTED SYMBOLS)
 int ft_vdprintf(int fd, const char *format, va_list *args);
 int ft_dprintf(int fd, const char *format, ...);
-int ft_fprintf(FILE *stream, const char *format, ...);
+int ft_fprintf(T_FT_FILE *stream, const char *format, ...);
 int ft_printf(const char *format, ...);
 // All these functions is for ft_printf end_comment
 
@@ -213,45 +271,6 @@ void ft_lst_print_double_wrapper(void *data);
 
 // ft_fflush.c start
 
-#define ft_size_t long unsigned int
-#define ft_ssize_t long int
-#define FT_BUFSIZ 1024
-
-#define FT_MODE_READ 0
-#define FT_MODE_WRITE 1
-
-#define FT_IOFBF 0 // Full buffering
-#define FT_IOLBF 1 // Line buffering
-#define FT_IONBF 2 // No buffering
-
-/* Standard file descriptors.  */
-#define FT_STDIN_FILENO 0  /* Standard input.  */
-#define FT_STDOUT_FILENO 1 /* Standard output.  */
-#define FT_STDERR_FILENO 2 /* Standard error output.  */
-#define FT_EOF (-1)
-
-#define FT_O_RDONLY 00
-#define FT_O_WRONLY 01
-#define FT_O_RDWR 02
-#define FT_O_CREAT 0100  /* Not fcntl.  */
-#define FT_O_TRUNC 01000 /* Not fcntl.  */
-#define FT_O_APPEND 02000
-
-typedef struct T_FT_FILE {
-  int fd;
-  char buffer[FT_BUFSIZ];
-  ft_size_t buf_pos;
-  ft_size_t buf_len;
-  int mode;     // FT_MODE_READ or FT_MODE_WRITE
-  int buf_mode; // FT_IOFBF, FT_IOLBF, FT_IONBF
-  int error;
-  int eof;
-  struct T_FT_FILE *next;
-} T_FT_FILE;
-
-extern T_FT_FILE *ft_stdout;
-extern T_FT_FILE *ft_stdin;
-
 int ft_ferror(T_FT_FILE *fp);
 int ft_feof(T_FT_FILE *fp);
 void ft_clearerr(T_FT_FILE *fp);
@@ -261,6 +280,6 @@ int ft_fputc(char c, T_FT_FILE *fp);
 int ft_fgetc(T_FT_FILE *fp);
 int ft_fflush(T_FT_FILE *fp);
 int ft_fclose(T_FT_FILE *fp);
-
+int ft_fileno(T_FT_FILE *fp);
 // ft_fflush.c end
 #endif

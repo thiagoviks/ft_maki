@@ -12,6 +12,7 @@ static void register_file(T_FT_FILE *fp) {
 // Predefined streams
 T_FT_FILE *ft_stdout = FT_NULL;
 T_FT_FILE *ft_stdin = FT_NULL;
+T_FT_FILE *ft_stderr = FT_NULL;
 
 // Init std streams
 static void ft_init_std_streams() {
@@ -215,4 +216,17 @@ int ft_fclose(T_FT_FILE *fp) {
   int ret = ft_close(fp->fd);
   ft_free(fp);
   return (ret == 0 ? 0 : FT_EOF);
+}
+
+int ft_fileno(T_FT_FILE *fp) {
+  if (!fp) {
+    ft_errno = FT_EINVAL;
+    return -1;
+  }
+  if (fp->fd < 0) {
+    fp->error = 1;
+    ft_errno = FT_EBADF;
+    return -1;
+  }
+  return fp->fd;
 }

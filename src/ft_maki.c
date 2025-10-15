@@ -773,7 +773,7 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd) {
 }
 
 // is used on ft_perror start
-int saved_errno; // or extern if defined elsewhere
+int ft_errno; // or extern if defined elsewhere
 static const char *current_lang = "en";
 
 void ft_set_language(const char *lang) { current_lang = lang; }
@@ -895,7 +895,7 @@ static const char *ft_get_error_message(int err) {
 void ft_perror(const char *str) {
   if (str && *str)
     ft_printf("%s: ", str);
-  ft_printf("%s\n", ft_get_error_message(saved_errno));
+  ft_printf("%s\n", ft_get_error_message(ft_errno));
 }
 
 const char *ft_strerror(int err) { return (ft_get_error_message(err)); }
