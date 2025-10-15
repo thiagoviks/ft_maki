@@ -30,6 +30,7 @@ typedef unsigned long int ft_uint64_t;
 #define FT_EIO 5     // I/O error
 #define FT_EBADF 9   // Bad file descriptor
 #define FT_EINVAL 22 // Invalid argument
+#define FT_ENOTTY 25 // Inappropriate ioctl for device
 #define FT_EPIPE 32  // Broken pipe
 
 // Global error variable
