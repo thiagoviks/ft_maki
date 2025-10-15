@@ -41,6 +41,14 @@ typedef unsigned long int ft_uintptr_t;
 // Global error variable
 extern int ft_errno;
 
+// used to ft_gettimeofday()
+#define FT_SYS_GETTIMEOFDAY 96
+
+typedef struct s_timeval {
+  long int ft_tv_sec;
+  long int ft_tv_usec; /* Microseconds.  */
+} t_timeval;
+
 // Is used for RAM magenement
 typedef struct s_block {
   ft_size_t size;
@@ -123,6 +131,7 @@ extern T_FT_FILE *ft_stderr;
 // make syscall
 /* syscall wrapper: retorna valor bruto do syscall (tipo long) */
 long ft_syscall(long number, ...);
+int ft_gettimeofday(struct s_timeval *tv, void *tz);
 int ft_isatty(int fd);
 ft_ssize_t ft_write(int fd, const void *buf, ft_size_t len);
 void ft_exit(long code);

@@ -48,6 +48,25 @@ long ft_syscall(long number, ...) {
   return rax;
 }
 
+/* this function call syscall 96 to return current time in seconds and
+ * microseconds*/
+int ft_gettimeofday(struct s_timeval *tv, void *tz) {
+  long ret;
+
+  if (!tv) {
+    ft_errno = FT_EINVAL;
+    return (-1);
+  }
+
+  ret = ft_syscall(FT_SYS_GETTIMEOFDAY, tv, tz);
+  if (ret < 0) {
+    ft_errno = -ret;
+    return (-1);
+  }
+
+  return (0);
+}
+
 int ft_isatty(int fd) {
   /*The third argument is a pointer to a termios structure — here we simply
 pass any buffer; if the ioctl fails with -ENOTTY, the descriptor is not
