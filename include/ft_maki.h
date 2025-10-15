@@ -211,4 +211,56 @@ void ft_lst_print_float_wrapper(void *data);
 void ft_lst_print_double_wrapper(void *data);
 // ft_lst_wrappers.c end
 
+// ft_fflush.c start
+
+#define ft_size_t long unsigned int
+#define ft_ssize_t long int
+#define FT_BUFSIZ 1024
+
+#define FT_MODE_READ 0
+#define FT_MODE_WRITE 1
+
+#define FT_IOFBF 0 // Full buffering
+#define FT_IOLBF 1 // Line buffering
+#define FT_IONBF 2 // No buffering
+
+/* Standard file descriptors.  */
+#define FT_STDIN_FILENO 0  /* Standard input.  */
+#define FT_STDOUT_FILENO 1 /* Standard output.  */
+#define FT_STDERR_FILENO 2 /* Standard error output.  */
+#define FT_EOF (-1)
+
+#define FT_O_RDONLY 00
+#define FT_O_WRONLY 01
+#define FT_O_RDWR 02
+#define FT_O_CREAT 0100  /* Not fcntl.  */
+#define FT_O_TRUNC 01000 /* Not fcntl.  */
+#define FT_O_APPEND 02000
+
+typedef struct T_FT_FILE {
+  int fd;
+  char buffer[FT_BUFSIZ];
+  ft_size_t buf_pos;
+  ft_size_t buf_len;
+  int mode;     // FT_MODE_READ or FT_MODE_WRITE
+  int buf_mode; // FT_IOFBF, FT_IOLBF, FT_IONBF
+  int error;
+  int eof;
+  struct T_FT_FILE *next;
+} T_FT_FILE;
+
+extern T_FT_FILE *ft_stdout;
+extern T_FT_FILE *ft_stdin;
+
+int ft_ferror(T_FT_FILE *fp);
+int ft_feof(T_FT_FILE *fp);
+void ft_clearerr(T_FT_FILE *fp);
+int ft_setvbuf(T_FT_FILE *fp, int mode);
+T_FT_FILE *ft_fopen(const char *filename, const char *mode);
+int ft_fputc(char c, T_FT_FILE *fp);
+int ft_fgetc(T_FT_FILE *fp);
+int ft_fflush(T_FT_FILE *fp);
+int ft_fclose(T_FT_FILE *fp);
+
+// ft_fflush.c end
 #endif
