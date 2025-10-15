@@ -648,10 +648,10 @@ int ft_dprintf(int fd, const char *format, ...) {
   return (r);
 }
 
-int ft_fprintf(FILE *stream, const char *format, ...) {
+int ft_fprintf(T_FT_FILE *stream, const char *format, ...) {
   va_list ap;
   va_start(ap, format);
-  int fd = fileno(stream);
+  int fd = ft_fileno(stream);
   int r = ft_vdprintf(fd, format, &ap);
   va_end(ap);
   return (r);
