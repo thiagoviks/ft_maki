@@ -9,6 +9,70 @@ static ft_size_t align(ft_size_t size) {
   return ((size + (FT_ALIGNMENT - 1)) & ~(FT_ALIGNMENT - 1));
 }
 
+/*
+ * x86_64 syscall convention:
+ * rax = syscall number
+ * rdi, rsi, rdx, r10, r8, r9 = args 1..6
+ * syscall clobbers rcx, r11 and may clobber memory
+ *
+ * This function returns the raw rax value (signed long).
+ */
+
+long ft_syscall(long number, ...) {
+  va_list ap;
+  long a1 = 0, a2 = 0, a3 = 0, a4 = 0, a5 = 0, a6 = 0;
+
+  va_start(ap, number);
+  a1 = va_arg(ap, long);
+  a2 = va_arg(ap, long);
+  a3 = va_arg(ap, long);
+  a4 = va_arg(ap, long);
+  a5 = va_arg(ap, long);
+  a6 = va_arg(ap, long);
+  va_end(ap);
+
+  register long r10 asm("r10") = a4;
+  register long r8 asm("r8") = a5;
+  register long r9 asm("r9") = a6;
+
+  register long rax asm("rax") = number;
+  register long rdi asm("rdi") = a1;
+  register long rsi asm("rsi") = a2;
+  register long rdx asm("rdx") = a3;
+
+  asm volatile("syscall"
+               : "+r"(rax)
+               : "r"(rdi), "r"(rsi), "r"(rdx), "r"(r10), "r"(r8), "r"(r9)
+               : "rcx", "r11", "memory");
+
+  return rax;
+}
+
+int ft_isatty(int fd) {
+  /*The third argument is a pointer to a termios structure — here we simply
+pass any buffer; if the ioctl fails with -ENOTTY, the descriptor is not
+tty. */
+  char buf[8]; /*enough space; kernel only needs non-null pointer*/
+  long ret;
+
+  ret = ft_syscall(FT_SYS_IOCTL, (long)fd, (long)FT_TCGETS,
+                   (long)(ft_uintptr_t)buf, 0, 0, 0);
+
+  if (ret < 0) {
+    /* kernel returns -ERRNO on rax; if negative, we convert */
+    long err = -ret;
+    /* common limit of negative errno returned from kernel is -4095..-1 */
+    if (err > 0 && err <= 4095) {
+      ft_errno = (int)err;
+    } else {
+      ft_errno = -1; /* unknown error */
+    }
+    /* behavior: isatty returns 0 if not a tty (or error) */
+    return 0;
+  }
+  return 1;
+}
+
 ft_ssize_t ft_write(int fd, const void *buf, ft_size_t len) {
   ft_ssize_t ret;
   __asm__ volatile("movq $1, %%rax\n\t" // syscall number for write
@@ -642,8 +706,8 @@ void *ft_memcpy(void *dest, const void *src, ft_size_t num) {
 
 // Custom calloc implementation
 void *ft_calloc(ft_size_t nmemb, ft_size_t size) {
-  ft_size_t total_size = nmemb * size;  // Calculate total size required
-  void *ptr = ft_malloc(total_size); // Allocate memory using malloc
+  ft_size_t total_size = nmemb * size; // Calculate total size required
+  void *ptr = ft_malloc(total_size);   // Allocate memory using malloc
   if (ptr)
     ft_memset(ptr, 0, total_size); // Initialize the allocated memory to 0
   return (ptr);

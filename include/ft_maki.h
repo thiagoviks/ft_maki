@@ -21,6 +21,7 @@ typedef long unsigned int ft_size_t;
 typedef long int ft_ssize_t;
 typedef unsigned int ft_uint32_t;
 typedef unsigned long int ft_uint64_t;
+typedef unsigned long int ft_uintptr_t;
 #define ft_offsetof(type, member) ((ft_size_t) & (((type *)0)->member))
 
 // used at ft_fflush
@@ -32,6 +33,10 @@ typedef unsigned long int ft_uint64_t;
 #define FT_EINVAL 22 // Invalid argument
 #define FT_ENOTTY 25 // Inappropriate ioctl for device
 #define FT_EPIPE 32  // Broken pipe
+
+// Linux x86_64 syscall number for ioctl
+#define FT_SYS_IOCTL 16
+#define FT_TCGETS 0x5401
 
 // Global error variable
 extern int ft_errno;
@@ -116,6 +121,9 @@ extern T_FT_FILE *ft_stderr;
 
 // ft_maki.c start
 // make syscall
+/* syscall wrapper: retorna valor bruto do syscall (tipo long) */
+long ft_syscall(long number, ...);
+int ft_isatty(int fd);
 ft_ssize_t ft_write(int fd, const void *buf, ft_size_t len);
 void ft_exit(long code);
 ft_ssize_t ft_read(int fd, void *buf, ft_size_t count);
