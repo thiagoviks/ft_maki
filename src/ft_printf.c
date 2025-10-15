@@ -454,13 +454,13 @@ static int ft_printf_parse_number(const char **format) {
 }
 
 static inline t_flags ft_printf_parse_flags(const char **format) {
-  t_flags flags = {0, 0, false, false, false, 0};
+  t_flags flags = {0, 0, ft_false, ft_false, ft_false, 0};
 
   while (**format == '-' || **format == '0') {
     if (**format == '-')
-      flags.left_align = true;
+      flags.left_align = ft_true;
     else if (**format == '0')
-      flags.zero_padding = true;
+      flags.zero_padding = ft_true;
     (*format)++;
   }
 
@@ -469,7 +469,7 @@ static inline t_flags ft_printf_parse_flags(const char **format) {
 
   if (**format == '.') {
     (*format)++;
-    flags.precision_specified = true;
+    flags.precision_specified = ft_true;
     flags.precision = ft_printf_parse_number(format);
   }
 
@@ -483,7 +483,7 @@ static inline t_flags ft_printf_parse_flags(const char **format) {
   }
 
   if (flags.left_align)
-    flags.zero_padding = false;
+    flags.zero_padding = ft_false;
 
   return (flags);
 }

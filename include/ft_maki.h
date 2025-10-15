@@ -1,10 +1,7 @@
 #ifndef FT_MAKI_H
 #define FT_MAKI_H
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#include <stdarg.h> //va_list
 
 #define FT_COLOR_RESET "\033[0m"
 #define FT_COLOR_GREEN "\033[32m"
@@ -48,15 +45,15 @@ typedef struct s_block {
 } t_block;
 
 // To implement my own bool control
-typedef enum e_bool { FALSE = 0, TRUE = 1 } t_bool;
+typedef enum e_bool { ft_false = 0, ft_true = 1 } t_bool;
 
 // Flags struct  for ft_printf
 typedef struct s_flags {
   int width;
   int precision;
-  bool precision_specified;
-  bool left_align;
-  bool zero_padding;
+  t_bool precision_specified;
+  t_bool left_align;
+  t_bool zero_padding;
   int length;
 } t_flags;
 
