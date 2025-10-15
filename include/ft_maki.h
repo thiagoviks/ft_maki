@@ -19,6 +19,17 @@
 #define FT_NULL ((void *)0)
 typedef long unsigned int ft_size_t;
 typedef long int ft_ssize_t;
+typedef unsigned char ft_u_char;
+typedef unsigned short int ft_u_short;
+typedef unsigned int ft_u_int;
+typedef unsigned long int ft_u_long;
+typedef signed char ft_int8_t;
+typedef signed short int ft_int16_t;
+typedef signed int ft_int32_t;
+typedef signed long int ft_int64_t;
+typedef signed long int ft_intptr_t;
+typedef unsigned char ft_uint8_t;
+typedef unsigned short int ft_uint16_t;
 typedef unsigned int ft_uint32_t;
 typedef unsigned long int ft_uint64_t;
 typedef unsigned long int ft_uintptr_t;
