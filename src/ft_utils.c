@@ -1,8 +1,8 @@
 #include "../include/ft_maki.h"
 
-void ft_bzero(void *s, size_t n) { ft_memset(s, 0, n); }
-void *ft_memccpy(void *dest, const void *src, int c, size_t n) {
-  size_t i;
+void ft_bzero(void *s, ft_size_t n) { ft_memset(s, 0, n); }
+void *ft_memccpy(void *dest, const void *src, int c, ft_size_t n) {
+  ft_size_t i;
 
   i = 0;
   while (i < n) {
@@ -16,8 +16,8 @@ void *ft_memccpy(void *dest, const void *src, int c, size_t n) {
   return (FT_NULL);
 }
 
-void *ft_memmove(void *dest, const void *src, size_t n) {
-  size_t i;
+void *ft_memmove(void *dest, const void *src, ft_size_t n) {
+  ft_size_t i;
 
   i = 0;
   if (dest == src || !n)
@@ -36,8 +36,8 @@ void *ft_memmove(void *dest, const void *src, size_t n) {
   return (dest);
 }
 
-void *ft_memchr(const void *s, int c, size_t n) {
-  size_t i;
+void *ft_memchr(const void *s, int c, ft_size_t n) {
+  ft_size_t i;
 
   i = 0;
   while (i < n) {
@@ -48,8 +48,8 @@ void *ft_memchr(const void *s, int c, size_t n) {
   return (FT_NULL);
 }
 
-int ft_memcmp(const void *s1, const void *s2, size_t n) {
-  size_t i;
+int ft_memcmp(const void *s1, const void *s2, ft_size_t n) {
+  ft_size_t i;
 
   i = 0;
   while (i < n) {
@@ -61,8 +61,8 @@ int ft_memcmp(const void *s1, const void *s2, size_t n) {
   return (0);
 }
 
-size_t ft_strlcpy(char *dst, const char *src, size_t size) {
-  size_t count;
+ft_size_t ft_strlcpy(char *dst, const char *src, ft_size_t size) {
+  ft_size_t count;
 
   if (!dst || !src)
     return (0);
@@ -77,11 +77,11 @@ size_t ft_strlcpy(char *dst, const char *src, size_t size) {
   return (ft_strlen(src));
 }
 
-size_t ft_strlcat(char *dest, const char *src, size_t size) {
-  size_t i;
-  size_t j;
-  size_t size_dest;
-  size_t size_src;
+ft_size_t ft_strlcat(char *dest, const char *src, ft_size_t size) {
+  ft_size_t i;
+  ft_size_t j;
+  ft_size_t size_dest;
+  ft_size_t size_src;
 
   size_dest = ft_strlen(dest);
   size_src = ft_strlen(src);
@@ -133,8 +133,8 @@ char *ft_strrchr(const char *s, int c) {
   return (0);
 }
 
-char *ft_strnstr(const char *big, const char *little, size_t len) {
-  size_t little_len;
+char *ft_strnstr(const char *big, const char *little, ft_size_t len) {
+  ft_size_t little_len;
 
   if (*little == '\0')
     return ((char *)big);
@@ -147,8 +147,8 @@ char *ft_strnstr(const char *big, const char *little, size_t len) {
   return (FT_NULL);
 }
 
-int ft_strncmp(const char *s1, const char *s2, size_t n) {
-  size_t i;
+int ft_strncmp(const char *s1, const char *s2, ft_size_t n) {
+  ft_size_t i;
 
   i = 0;
   while (i < n && s1[i] != '\0' && s2[i] != '\0') {
@@ -232,29 +232,29 @@ int ft_isxdigit(int c) {
    isnan implementations
    ----------------------------- */
 
-static inline uint64_t double_to_u64(double x) {
-  uint64_t bits;
+static inline ft_uint64_t double_to_u64(double x) {
+  ft_uint64_t bits;
   ft_memcpy(&bits, &x, sizeof(bits));
   return (bits);
 }
 
-static inline uint32_t float_to_u32(float x) {
-  uint32_t bits;
+static inline ft_uint32_t float_to_u32(float x) {
+  ft_uint32_t bits;
   ft_memcpy(&bits, &x, sizeof(bits));
   return (bits);
 }
 
 static inline int isnan_double_custom(double x) {
-  uint64_t bits = double_to_u64(x);
-  const uint64_t EXP_MASK = 0x7FF0000000000000ULL;
-  const uint64_t FRAC_MASK = 0x000FFFFFFFFFFFFFULL;
+  ft_uint64_t bits = double_to_u64(x);
+  const ft_uint64_t EXP_MASK = 0x7FF0000000000000ULL;
+  const ft_uint64_t FRAC_MASK = 0x000FFFFFFFFFFFFFULL;
   return (((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0ULL));
 }
 
 static inline int isnan_float_custom(float x) {
-  uint32_t bits = float_to_u32(x);
-  const uint32_t EXP_MASK = 0x7F800000U;
-  const uint32_t FRAC_MASK = 0x007FFFFFU;
+  ft_uint32_t bits = float_to_u32(x);
+  const ft_uint32_t EXP_MASK = 0x7F800000U;
+  const ft_uint32_t FRAC_MASK = 0x007FFFFFU;
   return (((bits & EXP_MASK) == EXP_MASK) && ((bits & FRAC_MASK) != 0U));
 }
 
@@ -268,8 +268,8 @@ int ft_isinf(double x) {
   return ((y != y && !(x != x)));
 }
 
-char *ft_substr(char const *s, unsigned int start, size_t len) {
-  size_t i;
+char *ft_substr(char const *s, unsigned int start, ft_size_t len) {
+  ft_size_t i;
   char *buff;
 
   if (!s)
@@ -288,8 +288,8 @@ char *ft_substr(char const *s, unsigned int start, size_t len) {
 }
 
 char *ft_strjoin(char const *s1, char const *s2) {
-  size_t i;
-  size_t j;
+  ft_size_t i;
+  ft_size_t j;
   char *buff;
 
   if (!s1 || !s2)
@@ -313,7 +313,7 @@ char *ft_strjoin(char const *s1, char const *s2) {
 }
 
 char *ft_strtrim(char const *s1, char const *set) {
-  size_t len_s1;
+  ft_size_t len_s1;
   char *buff;
 
   if (!s1 || !set)
@@ -328,9 +328,9 @@ char *ft_strtrim(char const *s1, char const *set) {
   return (buff);
 }
 
-static size_t count_word(char const *s, char c) {
-  size_t i;
-  size_t count;
+static ft_size_t count_word(char const *s, char c) {
+  ft_size_t i;
+  ft_size_t count;
 
   i = 0;
   count = 0;
@@ -345,7 +345,7 @@ static size_t count_word(char const *s, char c) {
   return (count);
 }
 
-static char **free_buff(char **buff, size_t j) {
+static char **free_buff(char **buff, ft_size_t j) {
   while (j-- > 0) {
     ft_free(buff[j]);
     buff[j] = FT_NULL;
@@ -357,9 +357,9 @@ static char **free_buff(char **buff, size_t j) {
 
 char **ft_split(char const *s, char c) {
   char **buff;
-  size_t i;
-  size_t j;
-  size_t word_num;
+  ft_size_t i;
+  ft_size_t j;
+  ft_size_t word_num;
 
   if (!s ||
       !(buff = (char **)ft_malloc(sizeof(char *) * (count_word(s, c) + 1))))
@@ -426,7 +426,7 @@ char *ft_itoa(int n) {
 }
 
 char *ft_strmapi(char const *s, char (*f)(unsigned int, char)) {
-  size_t i;
+  ft_size_t i;
   char *buff;
 
   i = 0;

@@ -4,10 +4,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
-#include <sys/types.h> //ssize_t
-#include <unistd.h>
 
 #define FT_COLOR_RESET "\033[0m"
 #define FT_COLOR_GREEN "\033[32m"
@@ -22,10 +19,12 @@
 #define FT_BLOCK_SIZE sizeof(t_block)
 #define FT_MMAP_THRESHOLD (128 * 1024) // 128 KB
 #define FT_ALIGNMENT 16
-#define ft_offsetof(type, member) ((size_t)&(((type *)0)->member))
 #define FT_NULL ((void *)0)
-#define ft_size_t long unsigned int
-#define ft_ssize_t long int
+typedef long unsigned int ft_size_t;
+typedef long int ft_ssize_t;
+typedef unsigned int ft_uint32_t;
+typedef unsigned long int ft_uint64_t;
+#define ft_offsetof(type, member) ((ft_size_t) & (((type *)0)->member))
 
 // used at ft_fflush
 //  Common error codes (compatible with POSIX meanings)
@@ -41,7 +40,7 @@ extern int ft_errno;
 
 // Is used for RAM magenement
 typedef struct s_block {
-  size_t size;
+  ft_size_t size;
   int free;
   int is_mmap;
   struct s_block *next;
@@ -119,16 +118,16 @@ extern T_FT_FILE *ft_stderr;
 
 // ft_maki.c start
 // make syscall
-ssize_t ft_write(int fd, const void *buf, size_t len);
+ft_ssize_t ft_write(int fd, const void *buf, ft_size_t len);
 void ft_exit(long code);
-ssize_t ft_read(int fd, void *buf, size_t count);
+ft_ssize_t ft_read(int fd, void *buf, ft_size_t count);
 int ft_open(const char *pathname, int flags, int mode);
 int ft_close(int fd);
 
 char *ft_strcat(char *s1, const char *s2);
 char *ft_strcpy(char *dst, const char *src);
 char *ft_strncpy(char *dest, const char *src, unsigned int n);
-size_t ft_strlen(const char *s);
+ft_size_t ft_strlen(const char *s);
 void ft_putchar(char c);
 void ft_putstr(const char *str);
 int ft_atoi(const char *nptr);
@@ -142,7 +141,7 @@ int ft_itoa_str(int num, char *str);
 int ft_strcmp(const char *s1, const char *s2);
 char *ft_strtok(char *str, const char *delim);
 char *ft_strpbrk(const char *s, const char *accept);
-ssize_t ft_getline(char **lineptr, size_t *n, int fd);
+ft_ssize_t ft_getline(char **lineptr, ft_size_t *n, int fd);
 // const char			*ft_get_error_message(int err);
 void ft_set_language(const char *lang); // "en", "pt", etc.
 void ft_perror(const char *str);
@@ -154,17 +153,17 @@ char *ft_itoa_base(int value, char *buf, int base);
 int ft_sprintf(char *buf, const char *fmt, ...);
 
 // RAM manager
-void *ft_malloc(size_t size);
+void *ft_malloc(ft_size_t size);
 void ft_free(void *ptr);
-void *ft_memset(void *ptr, int value, size_t num);
-void *ft_memcpy(void *dest, const void *src, size_t n);
-void *ft_calloc(size_t nmemb, size_t size);
-void *ft_realloc(void *ptr, size_t size);
+void *ft_memset(void *ptr, int value, ft_size_t num);
+void *ft_memcpy(void *dest, const void *src, ft_size_t n);
+void *ft_calloc(ft_size_t nmemb, ft_size_t size);
+void *ft_realloc(void *ptr, ft_size_t size);
 
 // Internal helper functions used exclusively by ft_malloc for memory
-// management. static size_t align(size_t size); static t_block
-// *find_free_block(size_t size); static t_block *request_space(size_t size);
-// static void coalesce(t_block *block);
+// management. static ft_size_t align(ft_size_t size); static t_block
+// *find_free_block(ft_size_t size); static t_block *request_space(ft_size_t
+// size); static void coalesce(t_block *block);
 
 // ft_maki.c end
 
@@ -204,17 +203,17 @@ int ft_printf(const char *format, ...);
 // All these functions is for ft_printf end_comment
 
 // ft_utils.c start
-void ft_bzero(void *s, size_t n);
-void *ft_memccpy(void *dest, const void *src, int c, size_t n);
-void *ft_memmove(void *dest, const void *src, size_t n);
-void *ft_memchr(const void *s, int c, size_t n);
-int ft_memcmp(const void *s1, const void *s2, size_t n);
-size_t ft_strlcpy(char *dst, const char *src, size_t size);
-size_t ft_strlcat(char *dst, const char *src, size_t size);
+void ft_bzero(void *s, ft_size_t n);
+void *ft_memccpy(void *dest, const void *src, int c, ft_size_t n);
+void *ft_memmove(void *dest, const void *src, ft_size_t n);
+void *ft_memchr(const void *s, int c, ft_size_t n);
+int ft_memcmp(const void *s1, const void *s2, ft_size_t n);
+ft_size_t ft_strlcpy(char *dst, const char *src, ft_size_t size);
+ft_size_t ft_strlcat(char *dst, const char *src, ft_size_t size);
 char *ft_strchr(const char *s, int c);
 char *ft_strrchr(const char *s, int c);
-char *ft_strnstr(const char *big, const char *little, size_t len);
-int ft_strncmp(const char *s1, const char *s2, size_t n);
+char *ft_strnstr(const char *big, const char *little, ft_size_t len);
+int ft_strncmp(const char *s1, const char *s2, ft_size_t n);
 
 int ft_isalpha(int c);
 int ft_isdigit(int c);
@@ -229,7 +228,7 @@ int ft_isnanf(float x);
 int ft_isnan(double x);
 int ft_isinf(double x);
 
-char *ft_substr(char const *s, unsigned int start, size_t len);
+char *ft_substr(char const *s, unsigned int start, ft_size_t len);
 char *ft_strjoin(char const *s1, char const *s2);
 char *ft_strtrim(char const *s1, char const *set);
 char **ft_split(char const *s, char c);

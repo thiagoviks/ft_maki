@@ -5,12 +5,12 @@ static t_block *head = FT_NULL;
 // is used on ft_strtok
 static char *saveptr = FT_NULL;
 
-static size_t align(size_t size) {
+static ft_size_t align(ft_size_t size) {
   return ((size + (FT_ALIGNMENT - 1)) & ~(FT_ALIGNMENT - 1));
 }
 
-ssize_t ft_write(int fd, const void *buf, size_t len) {
-  ssize_t ret;
+ft_ssize_t ft_write(int fd, const void *buf, ft_size_t len) {
+  ft_ssize_t ret;
   __asm__ volatile("movq $1, %%rax\n\t" // syscall number for write
                    "movq %1, %%rdi\n\t" // file descriptor
                    "movq %2, %%rsi\n\t" // buffer
@@ -23,8 +23,8 @@ ssize_t ft_write(int fd, const void *buf, size_t len) {
   return (ret);
 }
 
-ssize_t ft_read(int fd, void *buf, size_t count) {
-  ssize_t ret;
+ft_ssize_t ft_read(int fd, void *buf, ft_size_t count) {
+  ft_ssize_t ret;
   asm volatile("mov $0, %%rax\n"
                "syscall"
                : "=a"(ret)
@@ -105,8 +105,8 @@ char *ft_strncpy(char *dest, const char *src, unsigned int n) {
   return (dest);
 }
 
-size_t ft_strlen(const char *s) {
-  size_t len = 0;
+ft_size_t ft_strlen(const char *s) {
+  ft_size_t len = 0;
   while (s[len])
     len++;
   return (len);
@@ -340,13 +340,13 @@ double ft_atof(const char *s) {
   }
 
   if (starts_with_ci(p, "nan")) {
-    uint64_t nan_bits = 0x7FF8000000000001ULL;
+    ft_uint64_t nan_bits = 0x7FF8000000000001ULL;
     double nanval;
     ft_memcpy(&nanval, &nan_bits, sizeof(nanval));
     return (nanval * sign);
   }
   if (starts_with_ci(p, "inf")) {
-    uint64_t inf_bits = 0x7FF0000000000000ULL;
+    ft_uint64_t inf_bits = 0x7FF0000000000000ULL;
     double infval;
     ft_memcpy(&infval, &inf_bits, sizeof(infval));
     return (infval * sign);
@@ -479,7 +479,7 @@ char *ft_strpbrk(const char *s, const char *accept) {
   return (FT_NULL);
 }
 
-static t_block *find_free_block(size_t size) {
+static t_block *find_free_block(ft_size_t size) {
   t_block *current = head;
   while (current) {
     if (current->free && current->size >= size) {
@@ -490,12 +490,12 @@ static t_block *find_free_block(size_t size) {
   return (FT_NULL);
 }
 
-static t_block *request_space(size_t size) {
+static t_block *request_space(ft_size_t size) {
   void *addr;
   t_block *block;
 
   if (size >= FT_MMAP_THRESHOLD) {
-    size_t total = sizeof(t_block) + size;
+    ft_size_t total = sizeof(t_block) + size;
 
     asm volatile("mov $9, %%rax\n"    // syscall number for mmap
                  "mov $0, %%rdi\n"    // addr = NULL
@@ -565,7 +565,7 @@ static t_block *request_space(size_t size) {
   return block;
 }
 
-void *ft_malloc(size_t size) {
+void *ft_malloc(ft_size_t size) {
   if (size == 0)
     return (FT_NULL);
 
@@ -619,7 +619,7 @@ void ft_free(void *ptr) {
 }
 
 // Custom memset implementation
-void *ft_memset(void *ptr, int value, size_t num) {
+void *ft_memset(void *ptr, int value, ft_size_t num) {
   unsigned char *p = ptr; // Treat the pointer as a byte pointer
   while (num--) {
     *p = (unsigned char)value; // Set each byte to the given value
@@ -629,7 +629,7 @@ void *ft_memset(void *ptr, int value, size_t num) {
 }
 
 // Custom memcpy implementation
-void *ft_memcpy(void *dest, const void *src, size_t num) {
+void *ft_memcpy(void *dest, const void *src, ft_size_t num) {
   unsigned char *d = dest;      // Destination pointer
   const unsigned char *s = src; // Source pointer
   while (num--) {
@@ -641,8 +641,8 @@ void *ft_memcpy(void *dest, const void *src, size_t num) {
 }
 
 // Custom calloc implementation
-void *ft_calloc(size_t nmemb, size_t size) {
-  size_t total_size = nmemb * size;  // Calculate total size required
+void *ft_calloc(ft_size_t nmemb, ft_size_t size) {
+  ft_size_t total_size = nmemb * size;  // Calculate total size required
   void *ptr = ft_malloc(total_size); // Allocate memory using malloc
   if (ptr)
     ft_memset(ptr, 0, total_size); // Initialize the allocated memory to 0
@@ -650,7 +650,7 @@ void *ft_calloc(size_t nmemb, size_t size) {
 }
 
 // Custom realloc implementation
-void *ft_realloc(void *ptr, size_t size) {
+void *ft_realloc(void *ptr, ft_size_t size) {
   if (!ptr)
     return ft_malloc(size); // If the pointer is NULL, behave like malloc()
   if (size == 0) {
@@ -714,8 +714,8 @@ int ft_itoa_str(int num, char *str) {
   return (i);
 }
 
-void ft_map(int *arr, size_t size, int (*func)(int)) {
-  size_t i;
+void ft_map(int *arr, ft_size_t size, int (*func)(int)) {
+  ft_size_t i;
   int result;
   char output[20];
   int length;
@@ -730,7 +730,7 @@ void ft_map(int *arr, size_t size, int (*func)(int)) {
   }
 }
 
-ssize_t ft_getline(char **lineptr, size_t *n, int fd) {
+ft_ssize_t ft_getline(char **lineptr, ft_size_t *n, int fd) {
   if (!lineptr || !n)
     return (-1);
 
@@ -741,9 +741,9 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd) {
       return (-1);
   }
 
-  size_t i = 0;
+  ft_size_t i = 0;
   char c;
-  ssize_t bytes_read;
+  ft_ssize_t bytes_read;
 
   while (1) {
     bytes_read = ft_read(fd, &c, 1);
@@ -752,7 +752,7 @@ ssize_t ft_getline(char **lineptr, size_t *n, int fd) {
 
     // Reallocate if buffer is not sufficient
     if (i >= *n - 1) {
-      size_t new_size = *n * 2;
+      ft_size_t new_size = *n * 2;
       char *new_ptr = (char *)ft_realloc(*lineptr, new_size);
       if (!new_ptr)
         return (-1);
@@ -875,11 +875,11 @@ static const t_error g_errors[] = {{0, msg_success},
 // binary search
 
 static const char *ft_get_error_message(int err) {
-  size_t left = 0;
-  size_t right = sizeof(g_errors) / sizeof(t_error) - 1;
+  ft_size_t left = 0;
+  ft_size_t right = sizeof(g_errors) / sizeof(t_error) - 1;
 
   while (left <= right) {
-    size_t mid = left + (right - left) / 2;
+    ft_size_t mid = left + (right - left) / 2;
 
     if (g_errors[mid].code == err)
       return g_errors[mid].get_message();
@@ -901,8 +901,8 @@ void ft_perror(const char *str) {
 const char *ft_strerror(int err) { return (ft_get_error_message(err)); }
 
 void ft_list_all_errors(void) {
-  size_t len = sizeof(g_errors) / sizeof(t_error);
-  for (size_t code = 0; code <= len; code++)
+  ft_size_t len = sizeof(g_errors) / sizeof(t_error);
+  for (ft_size_t code = 0; code <= len; code++)
     ft_printf("Error %d: %s\n", code, ft_get_error_message(code));
 }
 
