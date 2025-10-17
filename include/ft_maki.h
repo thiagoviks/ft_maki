@@ -226,6 +226,7 @@ int ft_vdprintf(int fd, const char *format, va_list *args);
 int ft_dprintf(int fd, const char *format, ...);
 int ft_fprintf(T_FT_FILE *stream, const char *format, ...);
 int ft_printf(const char *format, ...);
+int ft_snprintf(char *str, ft_size_t size, const char *fmt, ...);
 // All these functions is for ft_printf end_comment
 
 // ft_utils.c start

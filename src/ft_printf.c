@@ -665,3 +665,155 @@ int ft_printf(const char *format, ...) {
   va_end(ap);
   return (r);
 }
+
+/*
+ * Safe snprintf implementation (minimal version)
+ * Supports: %s, %c, %d, %i, %u, %x, %X, %p, %%
+ *
+ * implemented ft_snprintf without using existing code, by now I'm struggle
+ * to implement ft_snprintf reusing ft_printf codebase
+ */
+int ft_snprintf(char *str, ft_size_t size, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+
+  ft_size_t pos = 0;
+  int total_written = 0;
+
+  for (ft_size_t i = 0; fmt[i]; i++) {
+    if (fmt[i] != '%') {
+      if (pos + 1 < size)
+        str[pos] = fmt[i];
+      pos++;
+      total_written++;
+      continue;
+    }
+
+    i++; // skip '%'
+    char spec = fmt[i];
+    if (!spec)
+      break;
+
+    char buffer[64];
+    const char *s = buffer;
+    int len = 0;
+
+    switch (spec) {
+    case '%':
+      buffer[0] = '%';
+      buffer[1] = '\0';
+      len = 1;
+      break;
+
+    case 'c': {
+      int c = va_arg(args, int);
+      buffer[0] = (char)c;
+      buffer[1] = '\0';
+      len = 1;
+      break;
+    }
+
+    case 's':
+      s = va_arg(args, const char *);
+      if (!s)
+        s = "(null)";
+      while (s[len])
+        len++;
+      break;
+
+    case 'd':
+    case 'i': {
+      long long n = va_arg(args, int);
+      unsigned long long tmp = (n < 0) ? -n : n;
+      int j = 63;
+      buffer[j--] = '\0';
+      if (tmp == 0)
+        buffer[j--] = '0';
+      while (tmp) {
+        buffer[j--] = '0' + (tmp % 10);
+        tmp /= 10;
+      }
+      if (n < 0)
+        buffer[j--] = '-';
+      s = &buffer[j + 1];
+      len = 63 - j;
+      break;
+    }
+
+    case 'u': {
+      unsigned int n = va_arg(args, unsigned int);
+      int j = 63;
+      buffer[j--] = '\0';
+      if (n == 0)
+        buffer[j--] = '0';
+      while (n) {
+        buffer[j--] = '0' + (n % 10);
+        n /= 10;
+      }
+      s = &buffer[j + 1];
+      len = 63 - j;
+      break;
+    }
+
+    case 'x':
+    case 'X': {
+      unsigned int n = va_arg(args, unsigned int);
+      int j = 63;
+      buffer[j--] = '\0';
+      const char *hex = (spec == 'x') ? "0123456789abcdef" : "0123456789ABCDEF";
+      if (n == 0)
+        buffer[j--] = '0';
+      while (n) {
+        buffer[j--] = hex[n % 16];
+        n /= 16;
+      }
+      s = &buffer[j + 1];
+      len = 63 - j;
+      break;
+    }
+
+    case 'p': {
+      ft_uintptr_t ptr = (ft_uintptr_t)va_arg(args, void *);
+      int j = 63;
+      buffer[j--] = '\0';
+      const char *hex = "0123456789abcdef";
+      if (ptr == 0)
+        buffer[j--] = '0';
+      while (ptr) {
+        buffer[j--] = hex[ptr % 16];
+        ptr /= 16;
+      }
+      buffer[j--] = 'x';
+      buffer[j--] = '0';
+      s = &buffer[j + 1];
+      len = 63 - j;
+      break;
+    }
+
+    default:
+      buffer[0] = '%';
+      buffer[1] = spec;
+      buffer[2] = '\0';
+      len = 2;
+      break;
+    }
+
+    // write to output buffer safely
+    for (int k = 0; k < len; k++) {
+      if (pos + 1 < size)
+        str[pos] = s[k];
+      pos++;
+      total_written++;
+    }
+  }
+
+  if (size > 0) {
+    if (pos < size)
+      str[pos] = '\0';
+    else
+      str[size - 1] = '\0';
+  }
+
+  va_end(args);
+  return (total_written);
+}
