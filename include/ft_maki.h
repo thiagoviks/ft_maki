@@ -33,6 +33,7 @@ typedef unsigned short int ft_uint16_t;
 typedef unsigned int ft_uint32_t;
 typedef unsigned long int ft_uint64_t;
 typedef unsigned long int ft_uintptr_t;
+typedef long long ft_time_t;  // seconds since 1970-01-01 00:00:00 UTC
 #define ft_offsetof(type, member) ((ft_size_t) & (((type *)0)->member))
 
 // used at ft_fflush
@@ -54,11 +55,14 @@ extern int ft_errno;
 
 // used to ft_gettimeofday()
 #define FT_SYS_GETTIMEOFDAY 96
+#define FT_SYS_time 201 // syscall sys_time for x86-64
 
 typedef struct s_timeval {
   long int ft_tv_sec;
   long int ft_tv_usec; /* Microseconds.  */
 } t_timeval;
+
+
 
 // Is used for RAM magenement
 typedef struct s_block {
@@ -191,35 +195,40 @@ void *ft_realloc(void *ptr, ft_size_t size);
 // *find_free_block(ft_size_t size); static t_block *request_space(ft_size_t
 // size); static void coalesce(t_block *block);
 
+void ft_srandom(unsigned int seed);
+long ft_random(void);
+int ft_rand_r(unsigned int *seedp);
+ft_time_t ft_time(ft_time_t *tloc);
+
 // ft_maki.c end
 
 // All these functions is for ft_printf start_comment
-// BUFFER MANAGEMENT
-static inline void ft_buf_set_fd(int fd);
-static inline void ft_buf_flush(void);
-static inline void ft_buf_putchar(char c);
-static inline void ft_buf_putnchar(char c, int n);
-static inline void ft_buf_putstr(const char *s, int len);
+// // BUFFER MANAGEMENT
+// static inline void ft_buf_set_fd(int fd);
+// static inline void ft_buf_flush(void);
+// static inline void ft_buf_putchar(char c);
+// static inline void ft_buf_putnchar(char c, int n);
+// static inline void ft_buf_putstr(const char *s, int len);
 
-// PRINTF CORE UTILITIES
-static inline int ft_printf_pad(char c, int count);
-static inline int ft_printf_numlen(long long n);
-static inline int ft_printf_unumlen(unsigned long n);
-static inline int ft_printf_max(int a, int b);
-static inline int ft_printf_putchar(char c);
-static inline int ft_printf_putnchar(char c, int n);
-static inline int ft_printf_putchar_base(char c, int width, int left);
-static inline int ft_printf_putstr(char *s, t_flags flags);
-static inline int ft_printf_putnbr(long long n, t_flags flags);
-static inline int ft_printf_putunbr(unsigned int n, t_flags flags);
-static inline int ft_printf_puthex(unsigned long n, t_flags flags,
-                                   int uppercase);
-static inline int ft_printf_putptr(void *ptr, t_flags flags);
-static inline long long ft_printf_power10(int n);
-static inline int ft_printf_putfloat(double n, t_flags flags);
-static inline int ft_printf_putpercent(t_flags flags);
-static inline t_flags ft_printf_parse_flags(const char **format);
-static inline int ft_printf_dispatch(char spec, va_list *args, t_flags flags);
+// // PRINTF CORE UTILITIES
+// static inline int ft_printf_pad(char c, int count);
+// static inline int ft_printf_numlen(long long n);
+// static inline int ft_printf_unumlen(unsigned long n);
+// static inline int ft_printf_max(int a, int b);
+// static inline int ft_printf_putchar(char c);
+// static inline int ft_printf_putnchar(char c, int n);
+// static inline int ft_printf_putchar_base(char c, int width, int left);
+// static inline int ft_printf_putstr(char *s, t_flags flags);
+// static inline int ft_printf_putnbr(long long n, t_flags flags);
+// static inline int ft_printf_putunbr(unsigned int n, t_flags flags);
+// static inline int ft_printf_puthex(unsigned long n, t_flags flags,
+//                                    int uppercase);
+// static inline int ft_printf_putptr(void *ptr, t_flags flags);
+// static inline long long ft_printf_power10(int n);
+// static inline int ft_printf_putfloat(double n, t_flags flags);
+// static inline int ft_printf_putpercent(t_flags flags);
+// static inline t_flags ft_printf_parse_flags(const char **format);
+// static inline int ft_printf_dispatch(char spec, va_list *args, t_flags flags);
 
 // NON-INLINED FUNCTIONS (EXPORTED SYMBOLS)
 int ft_vdprintf(int fd, const char *format, va_list *args);

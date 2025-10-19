@@ -5,6 +5,11 @@ static t_block *head = FT_NULL;
 // is used on ft_strtok
 static char *saveptr = FT_NULL;
 
+/* xorshift64* PRNG
+   state is 64-bit nonzero */
+// used for randomness functions
+static ft_uint64_t g_prng_state = 0; /* 0 means "not seeded" */
+
 static ft_size_t align(ft_size_t size) {
   return ((size + (FT_ALIGNMENT - 1)) & ~(FT_ALIGNMENT - 1));
 }
@@ -1105,4 +1110,66 @@ int ft_sprintf(char *buf, const char *fmt, ...) {
   *p = '\0';
   va_end(args);
   return ((int)(p - buf));
+}
+
+/* splitmix64: transform seed (32/64 bits) into 64-bit "good" seed state */
+static inline ft_uint64_t splitmix64_next(ft_uint64_t *state) {
+    ft_uint64_t z = (*state += 0x9E3779B97F4A7C15ULL);
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+    return (z ^ (z >> 31));
+}
+
+/* ft_srandom: initializes the generator with a 32-bit seed*/
+void ft_srandom(unsigned int seed) {
+    ft_uint64_t st = (ft_uint64_t)seed;
+    /* build a good 64-bit state from the seed (splitmix64) */
+    ft_uint64_t sm = st;
+    /* Populate the state with at least one non-null value */
+    g_prng_state = splitmix64_next(&sm);
+    if (g_prng_state == 0) g_prng_state = 0xF39A4B1C2D3E5F67ULL; /* fallback */
+}
+
+/* generates 64-bit pseudo-random using xorshift64 */
+static ft_uint64_t ft_xorshift64star(void) {
+    ft_uint64_t x = g_prng_state;
+    if (x == 0) {
+        /* if not seeded, initialize with value derived from a constant */
+        ft_uint64_t init = 0x243F6A8885A308D3ULL; /* any non-zero value */
+        g_prng_state = init;
+        x = init;
+    }
+    /* xorshift64* variant */
+    x ^= x >> 12; // a
+    x ^= x << 25; // b
+    x ^= x >> 27; // c
+    g_prng_state = x;
+    return (x * 2685821657736338717ULL);
+}
+
+/* ft_random_from_my: returns a non-negative long (similar to random()) */
+long ft_random(void) {
+    ft_uint64_t r = ft_xorshift64star();
+    /* map to 31 non-negative bits (compatible with RAND_MAX 0x7fffffff) */
+    return ((long)(r >> 33)); /* 64-31 = 33 -> uses the highest 31 bits */
+}
+
+/* optional: rand_r-like function that uses a seed by reference (32-bit) */
+int ft_rand_r(unsigned int *seedp) {
+    /* simple local LCG (not related to xorshift) for rand_r compat */
+    if (!seedp) return (-1);
+    ft_uint32_t s = *seedp;
+    s = s * 1103515245u + 12345u;
+    *seedp = s;
+    return ((int)((s >> 16) & 0x7FFF));
+}
+
+ft_time_t ft_time(ft_time_t *tloc) {
+    /* ft_syscall(FT_SYS_time, tloc) retorna seconds since epoch or -1 on error */
+    long ret = ft_syscall(FT_SYS_time, tloc);
+    if (ret == -1) {
+        /* errno already adjusted by the syscall wrapper if necessary*/
+        return ((ft_time_t)-1);
+    }
+    return ((ft_time_t)ret);
 }
