@@ -161,6 +161,27 @@ int ft_strncmp(const char *s1, const char *s2, ft_size_t n) {
   return (0);
 }
 
+unsigned long ft_strcspn(const char *__s, const char *__reject) {
+    unsigned char seen[256] = {0};
+    const unsigned char *s = (const unsigned char *)__s;
+    const unsigned char *r = (const unsigned char *)__reject;
+
+    /* mark reject bytes */
+    while (*r) {
+        seen[*r++] = 1;
+    }
+
+    /* scan s for first byte that is in reject */
+    unsigned long idx = 0;
+    while (s[idx]) {
+        if (seen[s[idx]]) {
+            return (idx);
+        }
+        idx++;
+    }
+    return (idx); /* no bytes from reject found in s */
+}
+
 int ft_isalpha(int c) {
   if (c >= 65 && c <= 90)
     return (c);
