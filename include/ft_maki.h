@@ -38,13 +38,40 @@ typedef long long ft_time_t;  // seconds since 1970-01-01 00:00:00 UTC
 
 // used at ft_fflush
 //  Common error codes (compatible with POSIX meanings)
-#define FT_EPERM 1   // Operation not permitted
-#define FT_ENOENT 2  // No such file or directory
-#define FT_EIO 5     // I/O error
-#define FT_EBADF 9   // Bad file descriptor
-#define FT_EINVAL 22 // Invalid argument
-#define FT_ENOTTY 25 // Inappropriate ioctl for device
-#define FT_EPIPE 32  // Broken pipe
+#define	FT_EPERM		 1	/* Operation not permitted */
+#define	FT_ENOENT		 2	/* No such file or directory */
+#define	FT_ESRCH		 3	/* No such process */
+#define	FT_EINTR		 4	/* Interrupted system call */
+#define	FT_EIO		   5	/* I/O error */
+#define	FT_ENXIO		 6	/* No such device or address */
+#define	FT_E2BIG		 7	/* Argument list too long */
+#define	FT_ENOEXEC	 8	/* Exec format error */
+#define	FT_EBADF		 9	/* Bad file number */
+#define	FT_ECHILD		10	/* No child processes */
+#define	FT_EAGAIN		11	/* Try again */
+#define	FT_ENOMEM		12	/* Out of memory */
+#define	FT_EACCES		13	/* Permission denied */
+#define	FT_EFAULT		14	/* Bad address */
+#define	FT_ENOTBLK	15	/* Block device required */
+#define	FT_EBUSY		16	/* Device or resource busy */
+#define	FT_EEXIST		17	/* File exists */
+#define	FT_EXDEV		18	/* Cross-device link */
+#define	FT_ENODEV		19	/* No such device */
+#define	FT_ENOTDIR	20	/* Not a directory */
+#define	FT_EISDIR		21	/* Is a directory */
+#define	FT_EINVAL		22	/* Invalid argument */
+#define	FT_ENFILE		23	/* File table overflow */
+#define	FT_EMFILE		24	/* Too many open files */
+#define	FT_ENOTTY		25	/* Not a typewriter */
+#define	FT_ETXTBSY	26	/* Text file busy */
+#define	FT_EFBIG		27	/* File too large */
+#define	FT_ENOSPC		28	/* No space left on device */
+#define	FT_ESPIPE		29	/* Illegal seek */
+#define	FT_EROFS		30	/* Read-only file system */
+#define	FT_EMLINK		31	/* Too many links */
+#define	FT_EPIPE		32	/* Broken pipe */
+#define	FT_EDOM		  33	/* Math argument out of domain of func */
+#define	FT_ERANGE		34	/* Math result not representable */
 
 // Linux x86_64 syscall number for ioctl
 #define FT_SYS_IOCTL 16
