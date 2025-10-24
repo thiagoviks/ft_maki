@@ -1114,62 +1114,95 @@ int ft_sprintf(char *buf, const char *fmt, ...) {
 
 /* splitmix64: transform seed (32/64 bits) into 64-bit "good" seed state */
 static inline ft_uint64_t splitmix64_next(ft_uint64_t *state) {
-    ft_uint64_t z = (*state += 0x9E3779B97F4A7C15ULL);
-    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
-    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
-    return (z ^ (z >> 31));
+  ft_uint64_t z = (*state += 0x9E3779B97F4A7C15ULL);
+  z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+  z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+  return (z ^ (z >> 31));
 }
 
 /* ft_srandom: initializes the generator with a 32-bit seed*/
 void ft_srandom(unsigned int seed) {
-    ft_uint64_t st = (ft_uint64_t)seed;
-    /* build a good 64-bit state from the seed (splitmix64) */
-    ft_uint64_t sm = st;
-    /* Populate the state with at least one non-null value */
-    g_prng_state = splitmix64_next(&sm);
-    if (g_prng_state == 0) g_prng_state = 0xF39A4B1C2D3E5F67ULL; /* fallback */
+  ft_uint64_t st = (ft_uint64_t)seed;
+  /* build a good 64-bit state from the seed (splitmix64) */
+  ft_uint64_t sm = st;
+  /* Populate the state with at least one non-null value */
+  g_prng_state = splitmix64_next(&sm);
+  if (g_prng_state == 0)
+    g_prng_state = 0xF39A4B1C2D3E5F67ULL; /* fallback */
 }
 
 /* generates 64-bit pseudo-random using xorshift64 */
 static ft_uint64_t ft_xorshift64star(void) {
-    ft_uint64_t x = g_prng_state;
-    if (x == 0) {
-        /* if not seeded, initialize with value derived from a constant */
-        ft_uint64_t init = 0x243F6A8885A308D3ULL; /* any non-zero value */
-        g_prng_state = init;
-        x = init;
-    }
-    /* xorshift64* variant */
-    x ^= x >> 12; // a
-    x ^= x << 25; // b
-    x ^= x >> 27; // c
-    g_prng_state = x;
-    return (x * 2685821657736338717ULL);
+  ft_uint64_t x = g_prng_state;
+  if (x == 0) {
+    /* if not seeded, initialize with value derived from a constant */
+    ft_uint64_t init = 0x243F6A8885A308D3ULL; /* any non-zero value */
+    g_prng_state = init;
+    x = init;
+  }
+  /* xorshift64* variant */
+  x ^= x >> 12; // a
+  x ^= x << 25; // b
+  x ^= x >> 27; // c
+  g_prng_state = x;
+  return (x * 2685821657736338717ULL);
 }
 
 /* ft_random_from_my: returns a non-negative long (similar to random()) */
 long ft_random(void) {
-    ft_uint64_t r = ft_xorshift64star();
-    /* map to 31 non-negative bits (compatible with RAND_MAX 0x7fffffff) */
-    return ((long)(r >> 33)); /* 64-31 = 33 -> uses the highest 31 bits */
+  ft_uint64_t r = ft_xorshift64star();
+  /* map to 31 non-negative bits (compatible with RAND_MAX 0x7fffffff) */
+  return ((long)(r >> 33)); /* 64-31 = 33 -> uses the highest 31 bits */
 }
 
 /* optional: rand_r-like function that uses a seed by reference (32-bit) */
 int ft_rand_r(unsigned int *seedp) {
-    /* simple local LCG (not related to xorshift) for rand_r compat */
-    if (!seedp) return (-1);
-    ft_uint32_t s = *seedp;
-    s = s * 1103515245u + 12345u;
-    *seedp = s;
-    return ((int)((s >> 16) & 0x7FFF));
+  /* simple local LCG (not related to xorshift) for rand_r compat */
+  if (!seedp)
+    return (-1);
+  ft_uint32_t s = *seedp;
+  s = s * 1103515245u + 12345u;
+  *seedp = s;
+  return ((int)((s >> 16) & 0x7FFF));
 }
 
 ft_time_t ft_time(ft_time_t *tloc) {
-    /* ft_syscall(FT_SYS_time, tloc) retorna seconds since epoch or -1 on error */
-    long ret = ft_syscall(FT_SYS_time, tloc);
-    if (ret == -1) {
-        /* errno already adjusted by the syscall wrapper if necessary*/
-        return ((ft_time_t)-1);
+  /* ft_syscall(FT_SYS_time, tloc) retorna seconds since epoch or -1 on error */
+  long ret = ft_syscall(FT_SYS_time, tloc);
+  if (ret == -1) {
+    /* errno already adjusted by the syscall wrapper if necessary*/
+    return ((ft_time_t)-1);
+  }
+  return ((ft_time_t)ret);
+}
+
+char *ft_fgets(char *str, int size, T_FT_FILE *stream) {
+  int i = 0;
+  while (i < size - 1) {
+    if (stream->buf_pos >= stream->buf_len) {
+      ft_ssize_t n = ft_read(stream->fd, stream->buffer, FT_BUFSIZ);
+      if (n <= 0) {
+        if (n == 0 || stream->eof)
+          break;
+        stream->error = 1;
+        return (FT_NULL);
+      }
+      stream->file_pos += n;
+      stream->buf_pos = 0;
+      stream->buf_len = n;
     }
-    return ((ft_time_t)ret);
+
+    char c = stream->buffer[stream->buf_pos++];
+    str[i++] = c;
+
+    if (c == '\n')
+      break; // Stop at newline
+
+    if (stream->buf_pos == stream->buf_len && i < size - 1) {
+      str[i] = '\0'; // Handle partial line
+      return (str);
+    }
+  }
+  str[i] = '\0'; // Null-terminate string
+  return ((i > 0) ? str : FT_NULL);
 }

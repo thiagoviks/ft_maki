@@ -340,6 +340,7 @@ int ft_ferror(T_FT_FILE *fp);
 int ft_feof(T_FT_FILE *fp);
 void ft_clearerr(T_FT_FILE *fp);
 int ft_setvbuf(T_FT_FILE *fp, int mode);
+char *ft_fgets(char *str, int size, T_FT_FILE *stream);
 
 /*
 ** ============================================================================
