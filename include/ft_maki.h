@@ -10,6 +10,8 @@
 */
 
 #define FT_NULL ((void *)0)
+#define FT_EXIT_FAILURE 1 /* Failing exit status.  */
+#define FT_EXIT_SUCCESS 0 /* Successful exit status.  */
 typedef long int ft_off_t;
 
 /* Size and pointer types */
