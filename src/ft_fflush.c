@@ -11,7 +11,7 @@ static void register_file(T_FT_FILE *fp) {
 
 // Predefined streams
 T_FT_FILE *ft_stdout = FT_NULL;
-T_FT_FILE *ft_stdin = FT_NULL;
+T_FT_FILE *ft_stdin =  FT_NULL;
 T_FT_FILE *ft_stderr = FT_NULL;
 
 // Init std streams
