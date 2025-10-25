@@ -11,7 +11,7 @@ static void register_file(T_FT_FILE *fp) {
 
 // Predefined streams
 T_FT_FILE *ft_stdout = FT_NULL;
-T_FT_FILE *ft_stdin =  FT_NULL;
+T_FT_FILE *ft_stdin = FT_NULL;
 T_FT_FILE *ft_stderr = FT_NULL;
 
 // Init std streams
@@ -210,7 +210,9 @@ int ft_fclose(T_FT_FILE *fp) {
   if (!fp)
     return (FT_EOF);
 
-  ft_fflush(fp);
+  if (fp->buf_dirty) {
+    ft_fflush(fp);
+  }
   unregister_file(fp);
 
   int ret = ft_close(fp->fd);
