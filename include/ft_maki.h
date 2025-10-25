@@ -466,6 +466,166 @@ void ft_clearerr(T_FT_FILE *fp);
 int ft_setvbuf(T_FT_FILE *fp, int mode);
 char *ft_fgets(char *str, int size, T_FT_FILE *stream);
 
+// ft_fseek
+
+/* Syscall number for lseek - architecture dependent */
+#define FT_SYS_lseek 8 /* x86_64 syscall number */
+
+// errno.h start
+#define FT_EDEADLK 35      /* Resource deadlock would occur */
+#define FT_ENAMETOOLONG 36 /* File name too long */
+#define FT_ENOLCK 37       /* No record locks available */
+
+/*
+ * This error code is special: arch syscall entry code will return
+ * -ENOSYS if users try to call a syscall that doesn't exist.  To keep
+ * failures of syscalls that really do exist distinguishable from
+ * failures due to attempts to use a nonexistent syscall, syscall
+ * implementations should refrain from returning -ENOSYS.
+ */
+#define FT_ENOSYS 38 /* Invalid system call number */
+
+#define FT_ENOTEMPTY 39       /* Directory not empty */
+#define FT_ELOOP 40           /* Too many symbolic links encountered */
+#define FT_EWOULDBLOCK EAGAIN /* Operation would block */
+#define FT_ENOMSG 42          /* No message of desired type */
+#define FT_EIDRM 43           /* Identifier removed */
+#define FT_ECHRNG 44          /* Channel number out of range */
+#define FT_EL2NSYNC 45        /* Level 2 not synchronized */
+#define FT_EL3HLT 46          /* Level 3 halted */
+#define FT_EL3RST 47          /* Level 3 reset */
+#define FT_ELNRNG 48          /* Link number out of range */
+#define FT_EUNATCH 49         /* Protocol driver not attached */
+#define FT_ENOCSI 50          /* No CSI structure available */
+#define FT_EL2HLT 51          /* Level 2 halted */
+#define FT_EBADE 52           /* Invalid exchange */
+#define FT_EBADR 53           /* Invalid request descriptor */
+#define FT_EXFULL 54          /* Exchange full */
+#define FT_ENOANO 55          /* No anode */
+#define FT_EBADRQC 56         /* Invalid request code */
+#define FT_EBADSLT 57         /* Invalid slot */
+
+#define FT_EDEADLOCK EDEADLK
+
+#define FT_EBFONT 59       /* Bad font file format */
+#define FT_ENOSTR 60       /* Device not a stream */
+#define FT_ENODATA 61      /* No data available */
+#define FT_ETIME 62        /* Timer expired */
+#define FT_ENOSR 63        /* Out of streams resources */
+#define FT_ENONET 64       /* Machine is not on the network */
+#define FT_ENOPKG 65       /* Package not installed */
+#define FT_EREMOTE 66      /* Object is remote */
+#define FT_ENOLINK 67      /* Link has been severed */
+#define FT_EADV 68         /* Advertise error */
+#define FT_ESRMNT 69       /* Srmount error */
+#define FT_ECOMM 70        /* Communication error on send */
+#define FT_EPROTO 71       /* Protocol error */
+#define FT_EMULTIHOP 72    /* Multihop attempted */
+#define FT_EDOTDOT 73      /* RFS specific error */
+#define FT_EBADMSG 74      /* Not a data message */
+#define FT_EOVERFLOW 75    /* Value too large for defined data type */
+#define FT_ENOTUNIQ 76     /* Name not unique on network */
+#define FT_EBADFD 77       /* File descriptor in bad state */
+#define FT_EREMCHG 78      /* Remote address changed */
+#define FT_ELIBACC 79      /* Can not access a needed shared library */
+#define FT_ELIBBAD 80      /* Accessing a corrupted shared library */
+#define FT_ELIBSCN 81      /* .lib section in a.out corrupted */
+#define FT_ELIBMAX 82      /* Attempting to link in too many shared libraries */
+#define FT_ELIBEXEC 83     /* Cannot exec a shared library directly */
+#define FT_EILSEQ 84       /* Illegal byte sequence */
+#define FT_ERESTART 85     /* Interrupted system call should be restarted */
+#define FT_ESTRPIPE 86     /* Streams pipe error */
+#define FT_EUSERS 87       /* Too many users */
+#define FT_ENOTSOCK 88     /* Socket operation on non-socket */
+#define FT_EDESTADDRREQ 89 /* Destination address required */
+#define FT_EMSGSIZE 90     /* Message too long */
+#define FT_EPROTOTYPE 91   /* Protocol wrong type for socket */
+#define FT_ENOPROTOOPT 92  /* Protocol not available */
+#define FT_EPROTONOSUPPORT 93 /* Protocol not supported */
+#define FT_ESOCKTNOSUPPORT 94 /* Socket type not supported */
+#define FT_EOPNOTSUPP 95    /* Operation not supported on transport endpoint */
+#define FT_EPFNOSUPPORT 96  /* Protocol family not supported */
+#define FT_EAFNOSUPPORT 97  /* Address family not supported by protocol */
+#define FT_EADDRINUSE 98    /* Address already in use */
+#define FT_EADDRNOTAVAIL 99 /* Cannot assign requested address */
+#define FT_ENETDOWN 100     /* Network is down */
+#define FT_ENETUNREACH 101  /* Network is unreachable */
+#define FT_ENETRESET 102    /* Network dropped connection because of reset */
+#define FT_ECONNABORTED 103 /* Software caused connection abort */
+#define FT_ECONNRESET 104   /* Connection reset by peer */
+#define FT_ENOBUFS 105      /* No buffer space available */
+#define FT_EISCONN 106      /* Transport endpoint is already connected */
+#define FT_ENOTCONN 107     /* Transport endpoint is not connected */
+#define FT_ESHUTDOWN 108    /* Cannot send after transport endpoint shutdown */
+#define FT_ETOOMANYREFS 109 /* Too many references: cannot splice */
+#define FT_ETIMEDOUT 110    /* Connection timed out */
+#define FT_ECONNREFUSED 111 /* Connection refused */
+#define FT_EHOSTDOWN 112    /* Host is down */
+#define FT_EHOSTUNREACH 113 /* No route to host */
+#define FT_EALREADY 114     /* Operation already in progress */
+#define FT_EINPROGRESS 115  /* Operation now in progress */
+#define FT_ESTALE 116       /* Stale file handle */
+#define FT_EUCLEAN 117      /* Structure needs cleaning */
+#define FT_ENOTNAM 118      /* Not a XENIX named type file */
+#define FT_ENAVAIL 119      /* No XENIX semaphores available */
+#define FT_EISNAM 120       /* Is a named type file */
+#define FT_EREMOTEIO 121    /* Remote I/O error */
+#define FT_EDQUOT 122       /* Quota exceeded */
+
+#define FT_ENOMEDIUM 123    /* No medium found */
+#define FT_EMEDIUMTYPE 124  /* Wrong medium type */
+#define FT_ECANCELED 125    /* Operation Canceled */
+#define FT_ENOKEY 126       /* Required key not available */
+#define FT_EKEYEXPIRED 127  /* Key has expired */
+#define FT_EKEYREVOKED 128  /* Key has been revoked */
+#define FT_EKEYREJECTED 129 /* Key was rejected by service */
+
+/* for robust mutexes */
+#define FT_EOWNERDEAD 130      /* Owner died */
+#define FT_ENOTRECOVERABLE 131 /* State not recoverable */
+
+#define FT_ERFKILL 132 /* Operation not possible due to RF-kill */
+
+#define FT_EHWPOISON 133 /* Memory page has hardware error */
+
+// errno.h end
+
+// stat.h flags start
+/* Encoding of the file mode.  */
+
+#define FT_S_IFMT 0170000 /* These bits determine file type.  */
+
+/* File types.  */
+#define FT_S_IFDIR 0040000  /* Directory.  */
+#define FT_S_IFCHR 0020000  /* Character device.  */
+#define FT_S_IFBLK 0060000  /* Block device.  */
+#define FT_S_IFREG 0100000  /* Regular file.  */
+#define FT_S_IFIFO 0010000  /* FIFO.  */
+#define FT_S_IFLNK 0120000  /* Symbolic link.  */
+#define FT_S_IFSOCK 0140000 /* Socket.  */
+
+/* Protection bits.  */
+
+#define FT_S_ISUID 04000 /* Set user ID on execution.  */
+#define FT_S_ISGID 02000 /* Set group ID on execution.  */
+#define FT_S_ISVTX 01000 /* Save swapped text after use (sticky).  */
+#define FT_S_IREAD 0400  /* Read by owner.  */
+#define FT_S_IWRITE 0200 /* Write by owner.  */
+#define FT_S_IEXEC 0100  /* Execute by owner.  */
+
+#define FT_S_ISTYPE(mode, mask) (((mode) & FT_S_IFMT) == (mask))
+#define FT_S_ISBLK(mode) FT_S_ISTYPE((mode), FT_S_IFBLK)
+
+// stat.h flags end
+
+/* Simplified file table - in real kernel this is per-process */
+#define FT_MAX_FDS 1024
+ft_off_t ft_lseek(int fd, ft_off_t offset, int whence);
+int ft_fseek(T_FT_FILE *stream, ft_off_t offset, int whence);
+ft_off_t ft_ftell(T_FT_FILE *stream);
+void ft_rewind(T_FT_FILE *stream);
+ft_size_t ft_fread(void *ptr, ft_size_t size, ft_size_t nmemb,
+                   T_FT_FILE *stream);
 /*
 ** ============================================================================
 ** SECTION 10: FORMATTED INPUT/OUTPUT (PRINTF FAMILY)
