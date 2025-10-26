@@ -241,6 +241,16 @@ ft_write and ft_read wrap the Linux syscalls directly, bypassing libc buffering.
 This ensures deterministic performance and behavior during benchmarking.
 
 
+## Building
+
+**Platform requirement**: Linux only
+
+This library requires the ft_maki project and is designed for Linux systems.
+```bash
+# Make sure you're on Linux
+gcc -o your_program your_program.c -lft_maki
+```
+
 ## 🚧 Roadmap
 
 - [x] Core libc functions (malloc, printf, strings, I/O)
