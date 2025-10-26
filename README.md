@@ -248,7 +248,7 @@ This ensures deterministic performance and behavior during benchmarking.
 This library requires the ft_maki project and is designed for Linux systems.
 ```bash
 # Make sure you're on Linux
-gcc -o your_program your_program.c -lft_maki
+clang -o your_program your_program.c -lft_maki
 ```
 
 ## 🚧 Roadmap
