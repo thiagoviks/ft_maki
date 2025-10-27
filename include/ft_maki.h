@@ -408,6 +408,23 @@ ft_ssize_t ft_getline(char **lineptr, ft_size_t *n, int fd);
 
 /*
 ** ============================================================================
+** SECTION 8-9: FUTEX STUFF
+** ============================================================================
+*/
+
+/* Timespec structure for futex timeout */
+struct ft_timespec {
+  long ft_tv_sec;  /* seconds */
+  long ft_tv_nsec; /* nanoseconds */
+};
+
+/* Mutex structure - single futex word is all we need */
+typedef struct s_ft_mutex {
+  int futex_word; /* 0=unlocked, 1=locked no waiters, 2=locked with waiters */
+} ft_mutex_t;
+
+/*
+** ============================================================================
 ** SECTION 9: INPUT/OUTPUT - BUFFERED (FILE STREAMS)
 ** ============================================================================
 */
@@ -438,6 +455,7 @@ typedef struct S_FT_FILE {
   int eof;
   int buf_dirty;     // 1 if buffer contains data to flush
   int last_op_write; // to track read->write transitions
+  ft_mutex_t lock;   // mutex for thread-safe operations
   struct S_FT_FILE *next;
 } T_FT_FILE;
 /* Standard streams */
