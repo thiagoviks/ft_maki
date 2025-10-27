@@ -67,7 +67,7 @@ void ft_clearerr(T_FT_FILE *fp) {
 }
 
 int ft_setvbuf(T_FT_FILE *fp, int mode) {
-  if (!fp || mode < 0 || mode > 2)
+  if (!fp || mode < FT_IOFBF || mode > FT_IONBF)
     return -1;
   fp->buf_mode = mode;
   return (0);
