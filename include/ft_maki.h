@@ -308,6 +308,7 @@ void ft_strswp(char **s1, char **s2);
 int ft_strcmp(const char *s1, const char *s2);
 int ft_strncmp(const char *s1, const char *s2, ft_size_t n);
 unsigned long ft_strcspn(const char *__s, const char *__reject);
+int ft_strisalnum(const char *str);
 char *ft_strstr(const char *big, const char *little);
 char *ft_strchr(const char *s, int c);
 char *ft_strrchr(const char *s, int c);
