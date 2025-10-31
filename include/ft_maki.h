@@ -294,11 +294,15 @@ void ft_bzero(void *s, ft_size_t n);
 */
 
 /* String length and basic operations */
+
 ft_size_t ft_strlen(const char *s);
 char *ft_strcpy(char *dst, const char *src);
 char *ft_strncpy(char *dest, const char *src, unsigned int n);
 char *ft_strcat(char *s1, const char *s2);
 char *ft_strdup(const char *s);
+char *ft_strnew(ft_size_t size);
+void ft_strdel(char **del);
+void ft_strswp(char **s1, char **s2);
 
 /* String comparison and searching */
 int ft_strcmp(const char *s1, const char *s2);

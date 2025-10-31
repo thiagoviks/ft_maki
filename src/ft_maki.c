@@ -519,6 +519,36 @@ char *ft_strdup(const char *src) {
   return (str);
 }
 
+char *ft_strnew(ft_size_t size) {
+  char *str;
+  char *ptrstr;
+
+  if (!(str = (char *)ft_malloc(sizeof(char) * size + 1)))
+    return (FT_NULL);
+  ptrstr = str;
+  while (size + 1) {
+    *ptrstr = 0;
+    ptrstr++;
+    size--;
+  }
+  return (str);
+}
+
+void ft_strdel(char **del) {
+  if (!del)
+    return;
+  ft_free(*del);
+  *del = FT_NULL;
+}
+
+void ft_strswp(char **s1, char **s2) {
+  char *tmp;
+
+  tmp = *s1;
+  *s1 = *s2;
+  *s2 = tmp;
+}
+
 static int is_delim(char c, const char *delim) {
   while (*delim) {
     if (c == *delim)
