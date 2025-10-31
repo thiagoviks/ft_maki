@@ -285,6 +285,7 @@ void *ft_memccpy(void *dest, const void *src, int c, ft_size_t n);
 void *ft_memmove(void *dest, const void *src, ft_size_t n);
 void *ft_memchr(const void *s, int c, ft_size_t n);
 int ft_memcmp(const void *s1, const void *s2, ft_size_t n);
+void *ft_memdup(const void *src, ft_size_t size);
 void ft_bzero(void *s, ft_size_t n);
 
 /*
@@ -687,11 +688,13 @@ int ft_sscanf(const char *str, const char *format, ...);
 /* Linked list structure */
 typedef struct s_list {
   void *content;
+  ft_size_t content_size;
   struct s_list *next;
 } t_list;
 
 /* List creation and manipulation */
 t_list *ft_lstnew(void *content);
+t_list *ft_lstnew2(const void *content, ft_size_t content_size);
 void ft_lstadd_front(t_list **lst, t_list *lstnew);
 void ft_lstadd_back(t_list **lst, t_list *lstnew);
 int ft_lstsize(t_list *lst);

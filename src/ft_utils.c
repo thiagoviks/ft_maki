@@ -61,6 +61,27 @@ int ft_memcmp(const void *s1, const void *s2, ft_size_t n) {
   return (0);
 }
 
+// Inspired by public.h from debian project
+void *ft_memdup(const void *src, ft_size_t size) {
+  ft_size_t i;
+  void *cpy;
+  const char *src_char;
+  char *cpy_char;
+
+  i = 0;
+  cpy = ft_malloc(size);
+  src_char = src;
+  cpy_char = cpy;
+  if (cpy != FT_NULL) {
+    while (i < size) {
+      cpy_char[i] = src_char[i];
+      i++;
+    }
+    return (cpy);
+  } else
+    return (FT_NULL);
+}
+
 ft_size_t ft_strlcpy(char *dst, const char *src, ft_size_t size) {
   ft_size_t count;
 
@@ -527,6 +548,25 @@ t_list *ft_lstnew(void *content) {
   head->content = content;
   head->next = FT_NULL;
   return (head);
+}
+
+t_list *ft_lstnew2(const void *content, ft_size_t content_size) {
+  t_list *lst;
+
+  if (!(lst = (t_list *)ft_malloc(sizeof(t_list))))
+    return (FT_NULL);
+  if (content != FT_NULL) {
+    if (!(lst->content = ft_memdup(content, content_size))) {
+      return (FT_NULL);
+      ft_free(lst);
+    }
+    lst->content_size = content_size;
+  } else {
+    lst->content = FT_NULL;
+    lst->content_size = 0;
+  }
+  lst->next = FT_NULL;
+  return (lst);
 }
 
 void ft_lstadd_front(t_list **lst, t_list *lstnew) {
