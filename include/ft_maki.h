@@ -307,11 +307,12 @@ void ft_strswp(char **s1, char **s2);
 /* String comparison and searching */
 int ft_strcmp(const char *s1, const char *s2);
 int ft_strncmp(const char *s1, const char *s2, ft_size_t n);
+unsigned long ft_strcspn(const char *__s, const char *__reject);
+char *ft_strstr(const char *big, const char *little);
 char *ft_strchr(const char *s, int c);
 char *ft_strrchr(const char *s, int c);
 char *ft_strnstr(const char *big, const char *little, ft_size_t len);
 char *ft_strpbrk(const char *s, const char *accept);
-unsigned long ft_strcspn(const char *__s, const char *__reject);
 
 /* String copying with size limit */
 ft_size_t ft_strlcpy(char *dst, const char *src, ft_size_t size);
