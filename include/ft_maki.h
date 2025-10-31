@@ -342,6 +342,7 @@ int ft_isascii(int c);
 int ft_isprint(int c);
 int ft_isspace(int c);
 int ft_isxdigit(int c);
+int ft_isblank(int c);
 
 /* Character conversion */
 int ft_toupper(int c);
