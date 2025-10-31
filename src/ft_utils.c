@@ -102,6 +102,24 @@ ft_size_t ft_strlcat(char *dest, const char *src, ft_size_t size) {
     return (size_dest + size_src);
 }
 
+char *ft_strstr(const char *big, const char *little) {
+  int i;
+
+  if (!*little)
+    return ((char *)big);
+  while (*big) {
+    if (*big == *little) {
+      i = 0;
+      while (big[i] && little[i] && big[i] == little[i])
+        i++;
+      if (!little[i])
+        return ((char *)big);
+    }
+    big++;
+  }
+  return (FT_NULL);
+}
+
 char *ft_strchr(const char *s, int c) {
   int i;
 
@@ -161,25 +179,36 @@ int ft_strncmp(const char *s1, const char *s2, ft_size_t n) {
   return (0);
 }
 
+int ft_strisalnum(const char *str) {
+  if (!str)
+    return (0);
+  while (*str) {
+    if (!ft_isalnum(*str) && *str != '_')
+      return (0);
+    str++;
+  }
+  return (1);
+}
+
 unsigned long ft_strcspn(const char *__s, const char *__reject) {
-    unsigned char seen[256] = {0};
-    const unsigned char *s = (const unsigned char *)__s;
-    const unsigned char *r = (const unsigned char *)__reject;
+  unsigned char seen[256] = {0};
+  const unsigned char *s = (const unsigned char *)__s;
+  const unsigned char *r = (const unsigned char *)__reject;
 
-    /* mark reject bytes */
-    while (*r) {
-        seen[*r++] = 1;
-    }
+  /* mark reject bytes */
+  while (*r) {
+    seen[*r++] = 1;
+  }
 
-    /* scan s for first byte that is in reject */
-    unsigned long idx = 0;
-    while (s[idx]) {
-        if (seen[s[idx]]) {
-            return (idx);
-        }
-        idx++;
+  /* scan s for first byte that is in reject */
+  unsigned long idx = 0;
+  while (s[idx]) {
+    if (seen[s[idx]]) {
+      return (idx);
     }
-    return (idx); /* no bytes from reject found in s */
+    idx++;
+  }
+  return (idx); /* no bytes from reject found in s */
 }
 
 int ft_isalpha(int c) {
@@ -249,6 +278,8 @@ int ft_isxdigit(int c) {
   return (0);
 }
 
+int ft_isblank(int c) { return ((c == ' ') || (c == '\t')); }
+
 /* -----------------------------
    isnan implementations
    ----------------------------- */
@@ -289,7 +320,7 @@ int ft_isinf(double x) {
   return ((y != y && !(x != x)));
 }
 
-char *ft_substr(char const *s, unsigned int start, ft_size_t len) {
+char *ft_strsub(char const *s, unsigned int start, ft_size_t len) {
   ft_size_t i;
   char *buff;
 
@@ -344,7 +375,7 @@ char *ft_strtrim(char const *s1, char const *set) {
   len_s1 = ft_strlen(s1);
   while (ft_strchr(set, *(s1 + len_s1)) && len_s1 > 0)
     len_s1--;
-  if (!(buff = ft_substr(s1, 0, len_s1 + 1)))
+  if (!(buff = ft_strsub(s1, 0, len_s1 + 1)))
     return (FT_NULL);
   return (buff);
 }
@@ -393,7 +424,7 @@ char **ft_split(char const *s, char c) {
     i = 0;
     while (*(s + i) != '\0' && *(s + i) != c)
       i++;
-    if (!(buff[j++] = ft_substr(s, 0, i)))
+    if (!(buff[j++] = ft_strsub(s, 0, i)))
       return (free_buff(buff, j - 1));
     s = s + i;
   }
