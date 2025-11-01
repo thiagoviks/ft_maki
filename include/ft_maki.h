@@ -304,6 +304,8 @@ char *ft_strdup(const char *s);
 char *ft_strnew(ft_size_t size);
 void ft_strdel(char **del);
 void ft_strswp(char **s1, char **s2);
+char *ft_strinsert(char **str, char c, ft_size_t index);
+char *ft_strremove(char **str, ft_size_t index);
 
 /* String comparison and searching */
 int ft_strcmp(const char *s1, const char *s2);
@@ -413,6 +415,7 @@ void ft_putnbr_fd(int n, int fd);
 
 /* Line input */
 ft_ssize_t ft_getline(char **lineptr, ft_size_t *n, int fd);
+int ft_getline2(const int fd, char **line);
 
 /*
 ** ============================================================================

@@ -890,6 +890,26 @@ ft_ssize_t ft_getline(char **lineptr, ft_size_t *n, int fd) {
   return (i);
 }
 
+int ft_getline2(const int fd, char **line) {
+  char buff[2];
+  char *dup;
+  char *tmp;
+  int ret;
+
+  dup = ft_strnew(0);
+  while ((ret = ft_read(fd, buff, 1)) > 0) {
+    buff[1] = 0;
+    if (!ft_strcmp(buff, "\n"))
+      break;
+    tmp = dup;
+    dup = ft_strjoin(dup, buff);
+    ft_strdel(&tmp);
+  }
+  *line = ft_strdup(dup);
+  ft_strdel(&dup);
+  return (ret);
+}
+
 // is used on ft_perror start
 int ft_errno; // or extern if defined elsewhere
 static const char *current_lang = "en";

@@ -232,6 +232,36 @@ unsigned long ft_strcspn(const char *__s, const char *__reject) {
   return (idx); /* no bytes from reject found in s */
 }
 
+char *ft_strinsert(char **str, char c, ft_size_t index) {
+  char *ret;
+
+  if (!str || index > ft_strlen(*str))
+    return (FT_NULL);
+  ret = ft_strnew(ft_strlen(*str) + 1);
+  ret = ft_strncpy(ret, *str, index);
+  ret[index] = c;
+  ret = ft_strcat(ret, *str + index);
+  ft_strdel(str);
+  *str = ft_strdup(ret);
+  ft_strdel(&ret);
+  return (*str);
+}
+
+char *ft_strremove(char **str, ft_size_t index) {
+  char *ret;
+
+  if (!str || index > ft_strlen(*str))
+    return (FT_NULL);
+  ret = ft_strnew(ft_strlen(*str) - 1);
+  ret = ft_strncpy(ret, *str, index);
+  ret[index - 1] = 0;
+  ret = ft_strcat(ret, *str + index);
+  ft_strdel(str);
+  *str = ft_strdup(ret);
+  ft_strdel(&ret);
+  return (*str);
+}
+
 int ft_isalpha(int c) {
   if (c >= 65 && c <= 90)
     return (c);
