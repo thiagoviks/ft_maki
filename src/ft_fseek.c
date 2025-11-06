@@ -180,9 +180,16 @@ void ft_rewind(T_FT_FILE *stream) {
 
 ft_size_t ft_fread(void *ptr, ft_size_t size, ft_size_t nmemb,
                    T_FT_FILE *stream) {
-  ft_size_t bytes_to_read = size * nmemb;
+  ft_size_t bytes_to_read;
   ft_size_t bytes_read = 0;
   char *dest = (char *)ptr;
+
+  if (!stream || !ptr || size == 0 || nmemb == 0)
+    return (0);
+
+  // ft_mutex_lock(&stream->lock);
+
+  bytes_to_read = size * nmemb;
 
   while (bytes_to_read > 0) {
     /* Need to fill buffer? */
@@ -191,11 +198,13 @@ ft_size_t ft_fread(void *ptr, ft_size_t size, ft_size_t nmemb,
       if (n <= 0) {
         if (n == 0)
           stream->eof = 1;
+        else
+          stream->error = 1;
         break;
       }
+      stream->file_pos += stream->buf_len;
       stream->buf_len = n;
       stream->buf_pos = 0;
-      stream->file_pos = ft_lseek(stream->fd, 0, FT_SEEK_CUR) - n;
     }
 
     /* Copy from buffer */
@@ -208,6 +217,8 @@ ft_size_t ft_fread(void *ptr, ft_size_t size, ft_size_t nmemb,
     bytes_read += to_copy;
     bytes_to_read -= to_copy;
   }
+
+  // ft_mutex_unclock(&stream->lock);
 
   return bytes_read / size;
 }
