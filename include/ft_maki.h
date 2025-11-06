@@ -434,6 +434,23 @@ typedef struct s_ft_mutex {
   int futex_word; /* 0=unlocked, 1=locked no waiters, 2=locked with waiters */
 } ft_mutex_t;
 
+#define FT_SYS_FUTEX 202 // x86_64 syscall number
+
+#define FT_FUTEX_WAIT 0
+#define FT_FUTEX_WAKE 1
+#define FT_FUTEX_PRIVATE_FLAG 128
+
+/* Private futex operations (faster - no cross-process support) */
+#define FT_FUTEX_WAIT_PRIVATE (FT_FUTEX_WAIT | FT_FUTEX_PRIVATE_FLAG)
+#define FT_FUTEX_WAKE_PRIVATE (FT_FUTEX_WAKE | FT_FUTEX_PRIVATE_FLAG)
+
+/* Mutex operations */
+int ft_mutex_init(ft_mutex_t *mutex);
+int ft_mutex_lock(ft_mutex_t *mutex);
+int ft_mutex_trylock(ft_mutex_t *mutex);
+int ft_mutex_unlock(ft_mutex_t *mutex);
+int ft_mutex_destroy(ft_mutex_t *mutex);
+
 /*
 ** ============================================================================
 ** SECTION 9: INPUT/OUTPUT - BUFFERED (FILE STREAMS)
