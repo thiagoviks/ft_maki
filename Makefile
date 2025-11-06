@@ -1,7 +1,3 @@
-#echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
-#source ~/.bashrc
-
-
 NAME = ft_maki
 SRC_DIR = src
 OBJ_DIR = build
