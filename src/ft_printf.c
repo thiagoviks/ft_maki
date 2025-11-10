@@ -333,10 +333,10 @@ static inline int ft_printf_putfloat(double n, t_flags flags) {
   }
 
   // Signal
-  int neg = 0;
+  double neg = 0.0;
   if (n < 0) {
     neg = 1;
-    n = -n;
+    n = 0.0 - n;
   }
 
   // Standard accuracy
