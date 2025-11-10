@@ -10,19 +10,20 @@ static void register_file(T_FT_FILE *fp) {
 }
 
 // Predefined streams
-T_FT_FILE *ft_stdout = FT_NULL;
-T_FT_FILE *ft_stdin = FT_NULL;
-T_FT_FILE *ft_stderr = FT_NULL;
+// T_FT_FILE *ft_stdout = FT_NULL;
+// T_FT_FILE *ft_stdin = FT_NULL;
+// T_FT_FILE *ft_stderr = FT_NULL;
 
 // Init std streams
 static void ft_init_std_streams() {
-  static int initalized = 0;
-  if (initalized)
+  static int initialized = 0;
+  if (initialized)
     return;
-  initalized = 1;
+  initialized = 1;
 
   ft_stdout = ft_malloc(sizeof(T_FT_FILE));
   ft_stdin = ft_malloc(sizeof(T_FT_FILE));
+  ft_stderr = ft_malloc(sizeof(T_FT_FILE));
 
   if (ft_stdout) {
     ft_stdout->fd = FT_STDOUT_FILENO;
@@ -44,6 +45,16 @@ static void ft_init_std_streams() {
     ft_stdin->error = 0;
     ft_stdin->eof = 0;
     register_file(ft_stdin);
+  }
+  if (ft_stderr) {
+    ft_stderr->fd = FT_STDERR_FILENO;
+    ft_stderr->buf_pos = 0;
+    ft_stderr->buf_len = 0;
+    ft_stderr->mode = FT_MODE_WRITE;
+    ft_stderr->buf_mode = FT_IONBF; // Usually unbuffered
+    ft_stderr->error = 0;
+    ft_stderr->eof = 0;
+    register_file(ft_stderr);
   }
 }
 
